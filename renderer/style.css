@@ -23,6 +23,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--blauw); out
 .keuze label { display: flex; align-items: center; gap: 6px; border: 1px solid var(--rand); border-radius: 6px; padding: 8px 12px; color: var(--tekst); cursor: pointer; }
 .keuze input { width: auto; margin: 0; }
 .keuze label:has(input:checked) { border-color: var(--blauw); background: #e8f0fb; }
+.kaart form + form { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rand); }
 .raster { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
 .breed { grid-column: 1 / -1; }
 button { font: inherit; cursor: pointer; }

@@ -1,0 +1,25 @@
+{
+ "shop": {
+  "naam": "Telecom A&E",
+  "kort": "Telecom AE",
+  "adres": "Oldenzaalsestraat 22",
+  "postcode": "7511 DR",
+  "plaats": "Enschede",
+  "telefoon": "053-4340006",
+  "email": "",
+  "website": "",
+  "openingstijden": "Maandag van 13:00 uur tot 18:00 uur\nDinsdag tot zaterdag van 10:00 uur tot 18:00 uur\nDonderdags tot 21:00 uur\nKoopzondag van 10:00 uur tot 17:00 uur",
+  "tekst": "BEKIJK TEVENS ONZE OVERIGE ADVERTENTIES OF KOM LANGS BIJ ONS IN DE WINKEL VOOR ONS OVERIGE AANBOD!\nVoor bedrijven dit toestel wordt geleverd met MARGE\n\nU kunt tevens bij ons terecht voor:\n- Reparatie van uw toestel\n- Verkoop van uw toestel\n- Inruil van uw toestel\n- Simlockvrij maken (unlocken)\n- GSM onderdelen\n- Accessoires\n\nContact:\n{naam}\n{adres}\n{postcode} {plaats}\n{telefoon}\n\nOpeningstijden:\n{openingstijden}",
+  "levering": "Ophalen of Verzenden"
+ },
+ "templates": {
+  "titelToestel": "{winkelkort} | {merk} {model} {opslag} {kleurnl} {staat} & Garantie",
+  "titelReparatie": "{winkelkort} l {model} Scherm incl monteren garantie",
+  "toestel": "Nu bij {winkelnaam}\nDe {merk} {model} {opslag} {kleurnl} {staat} & Garantie\n\n- Met {garantie} maanden garantie\n- Batterijconditie: {batterij}%\n- Opmerking: {opmerking}\n{specs}\n\n{winkel}",
+  "reparatie": "Nu bij {winkelnaam}\nDe {merk} {model} Scherm in alle kleuren incl. reparatie met GARANTIE.\nEn voor alle andere telefoonschade, problemen of waterschade kunt u bij ons terecht!\n\n(Meeste reparaties gereed in 30 minuten)\n\n{prijslijst}\n\nMet {garantie} maanden garantie\n\n{winkel}",
+  "prijslijstApple": "iPhone's\n- iPhone: 17 Pro Max €149\n- iPhone: 17 Pro €149\n- iPhone: 17 €149\n- iPhone: 17 Air opvraag\n- iPhone: 16 Pro / Pro Max €129\n- iPhone: 16 / 16 Plus €99\n- iPhone: 16e €99\n- iPhone: 15 Pro Max €139\n- iPhone: 15 Pro €119\n- iPhone: 15/Plus €99\n- iPhone: 14 Pro / 14 Pro Max €119\n- iPhone: 13 Pro / 13 Pro Max €119\n- iPhone: 14 / 14 plus €99\n- iPhone: 13/13 mini €99\n- iPhone: 12 Pro / 12 Pro Max €89\n- iPhone: 12 & 12 Mini €79\n- iPhone 11 Pro Max €79\n- iPhone 11 Pro €79\n- iPhone: 11 €69\n- iPhone: XS €69\n- iPhone: XR €69\n- iPhone: X €69\n- iPhone: 8 Plus €49\n- iPhone: 7 Plus €49\n- iPhone: 6S Plus €49\n- iPhone: SE 2022 Origineel €69\n- iPhone: SE 2020 €49\n- iPhone 8/7 €49",
+  "prijslijstSamsung": "",
+  "prijslijstOverig": ""
+ },
+ "uitwijk": { "telefoon": "toebehoren", "smartwatch": "toebehoren", "reparatie": "toebehoren" }
+}

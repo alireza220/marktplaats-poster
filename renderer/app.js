@@ -203,16 +203,24 @@ $('#browser').addEventListener('change', async (e) => {
   setTimeout(() => melding(''), 2500);
 });
 opslaanForm('#winkel', 'shop');
+function vulInstellingen() {
+  $('#browser').value = data.browser;
+  vulForm($('#winkel'), data.shop);
+  vulForm($('#sjablonen'), data.templates);
+  vulForm($('#uitwijk'), Object.fromEntries(Object.entries(data.uitwijk).map(([k, v]) => [k, v || ''])));
+}
+$('#exporteer').addEventListener('click', async () => { if (await call('settings:export')) melding('Instellingen geëxporteerd.'); });
+$('#importeer').addEventListener('click', async () => {
+  const nieuw = await call('settings:import');
+  if (nieuw) { data = nieuw; vulInstellingen(); melding('Instellingen geïmporteerd.'); }
+});
 opslaanForm('#sjablonen', 'templates');
 opslaanForm('#uitwijk', 'uitwijk', (v) => Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x || null])));
 
 // ---------- start ----------
 (async () => {
   data = await call('data:get');
-  $('#browser').value = data.browser;
-  vulForm($('#winkel'), data.shop);
-  vulForm($('#sjablonen'), data.templates);
-  vulForm($('#uitwijk'), Object.fromEntries(Object.entries(data.uitwijk).map(([k, v]) => [k, v || ''])));
+  vulInstellingen();
   toonOpgeslagen();
   if (!data.shop.naam) melding('Welkom! Vul eerst je winkelgegevens in bij Instellingen.');
   // Melding bij opstarten: advertenties die binnen 3 dagen verlopen

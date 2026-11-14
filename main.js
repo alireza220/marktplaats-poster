@@ -1,19 +1,24 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const gsm = require('./lib/gsmarena');
 const mp = require('./lib/marktplaats');
-const { renderTemplate, shopBlock, adTitle, mpColor, CATEGORIES } = require('./lib/mapping');
+const { renderTemplate, renderTitle, shopBlock, merkGroep, mpColor, CATEGORIES, WINKELTEKST } = require('./lib/mapping');
 
 const DIR = app.getPath('userData');
 const DATA_FILE = path.join(DIR, 'data.json');
 const LIST_FILE = path.join(DIR, 'modellijst.json');
 
 const DEFAULTS = {
-  shop: { naam: '', adres: '', postcode: '', plaats: '', telefoon: '', email: '', website: '', openingstijden: '', extra: 'Inruil mogelijk. Betalen met pin of contant.', levering: 'Ophalen' },
+  // kort = winkelnaam vooraan in de titel; tekst = vast winkelblok ({winkel}) onder elke advertentie
+  shop: { naam: '', kort: '', adres: '', postcode: '', plaats: '', telefoon: '', email: '', website: '', openingstijden: '', tekst: WINKELTEKST, levering: 'Ophalen of Verzenden' },
   templates: {
-    toestel: '{merk} {model} {opslag} – {kleur}\n\nStaat: {staat}\nBatterijconditie: {batterij}%\nGarantie: {garantie} maanden\nOpmerking: {opmerking}\n\nSpecificaties:\n{specs}\n\n{winkel}',
-    reparatie: 'Scherm kapot? Wij vervangen het scherm van je {merk} {model} snel en vakkundig.\n\nPrijs: € {prijs} inclusief montage\nGarantie: {garantie} maanden\n\nMaak een afspraak of loop gewoon binnen.\n\n{winkel}',
+    titelToestel: '{winkelkort} | {merk} {model} {opslag} {kleurnl} {staat} & Garantie',
+    titelReparatie: '{winkelkort} | {model} Scherm incl monteren garantie',
+    toestel: 'Nu bij {winkelnaam}\nDe {merk} {model} {opslag} {kleurnl} {staat}\n\n- Met {garantie} maanden garantie\n- Batterijconditie: {batterij}%\n- Opmerking: {opmerking}\n{specs}\n\n{winkel}',
+    reparatie: 'Nu bij {winkelnaam}\nDe {merk} {model} scherm vervangen, inclusief montage en met garantie.\nOok voor andere schade of problemen kunt u bij ons terecht.\n\nPrijs: € {prijs}\n\n{prijslijst}\n\nMet {garantie} maanden garantie\n\n{winkel}',
+    // {prijslijst} in de reparatietekst, gekozen op merk
+    prijslijstApple: '', prijslijstSamsung: '', prijslijstOverig: '',
   },
   // Uitwijkcategorie per type als de gewone categorie betaald is (null = niet uitwijken)
   uitwijk: { telefoon: 'toebehoren', smartwatch: 'toebehoren', reparatie: null },
@@ -25,7 +30,11 @@ const DEFAULTS = {
 };
 
 function load() {
-  try { return { ...DEFAULTS, ...JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')) }; } catch { return structuredClone(DEFAULTS); }
+  try {
+    const saved = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    // nieuwe velden uit DEFAULTS aanvullen zonder opgeslagen waarden te overschrijven
+    return { ...DEFAULTS, ...saved, shop: { ...DEFAULTS.shop, ...saved.shop }, templates: { ...DEFAULTS.templates, ...saved.templates } };
+  } catch { return structuredClone(DEFAULTS); }
 }
 let data = load();
 mp.setBrowser(DIR, data.browser);
@@ -57,11 +66,18 @@ function buildAd(ad) {
     cameraMp: model.specs.cameraMp,
     mpKleur: ad.mpKleur || mpColor(ad.kleur),
   };
-  full.titel = ad.titel || adTitle(full);
-  const tpl = data.templates[ad.kind === 'reparatie' ? 'reparatie' : 'toestel'];
-  const beschrijving = ad.beschrijving || renderTemplate(tpl, {
-    ...full, specs: gsm.specLines(model.specs), winkel: shopBlock(data.shop),
-  });
+  const isRep = ad.kind === 'reparatie';
+  const vars = {
+    ...full,
+    kleurnl: full.mpKleur.toLowerCase(),
+    winkelnaam: data.shop.naam,
+    winkelkort: data.shop.kort || data.shop.naam,
+    specs: gsm.specLines(model.specs),
+    prijslijst: data.templates[`prijslijst${merkGroep(model.brand)}`],
+    winkel: shopBlock(data.shop),
+  };
+  full.titel = ad.titel || renderTitle(data.templates[isRep ? 'titelReparatie' : 'titelToestel'], vars);
+  const beschrijving = ad.beschrijving || renderTemplate(data.templates[isRep ? 'reparatie' : 'toestel'], vars);
   return { full, beschrijving, fotos: model.fotos.filter((f) => fs.existsSync(f)) };
 }
 
@@ -111,6 +127,27 @@ const handlers = {
     return list;
   },
   'browser:open': async () => { await mp.getPage(); },
+
+  // Instellingen meenemen naar een andere pc (winkel, sjablonen, uitwijk, browser)
+  'settings:export': async () => {
+    const { filePath } = await dialog.showSaveDialog({ defaultPath: 'marktplaats-poster-instellingen.json', filters: [{ name: 'JSON', extensions: ['json'] }] });
+    if (!filePath) return false;
+    const { shop, templates, uitwijk, browser } = data;
+    fs.writeFileSync(filePath, JSON.stringify({ shop, templates, uitwijk, browser }, null, 1));
+    return true;
+  },
+  'settings:import': async () => {
+    const { filePaths } = await dialog.showOpenDialog({ filters: [{ name: 'JSON', extensions: ['json'] }], properties: ['openFile'] });
+    if (!filePaths?.length) return null;
+    const imp = JSON.parse(fs.readFileSync(filePaths[0], 'utf8'));
+    if (!imp || typeof imp.shop !== 'object' || typeof imp.templates !== 'object') throw new Error('Dit is geen instellingenbestand van Marktplaats Poster.');
+    data.shop = { ...DEFAULTS.shop, ...imp.shop };
+    data.templates = { ...DEFAULTS.templates, ...imp.templates };
+    if (imp.uitwijk) data.uitwijk = { ...DEFAULTS.uitwijk, ...imp.uitwijk };
+    if (imp.browser) { data.browser = imp.browser; mp.setBrowser(DIR, data.browser); }
+    save();
+    return data;
+  },
 };
 
 for (const [name, fn] of Object.entries(handlers)) {

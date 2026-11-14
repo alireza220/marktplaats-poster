@@ -6,7 +6,8 @@ Specs en officiële foto's komen automatisch van GSMArena. Jij klikt zelf op **P
 ## Gebruik
 
 1. Installeer `Marktplaats Poster Setup x.y.z.exe`.
-2. **Instellingen**: kies je browser (Edge, Chrome of Firefox, wordt onthouden als standaard), vul je winkelgegevens in (komen onder elke advertentie) en pas eventueel de sjablonen aan.
+2. **Instellingen**: kies je browser (Edge, Chrome of Firefox, wordt onthouden als standaard), vul je winkelgegevens in en pas de titel- en tekstsjablonen, het winkelblok en de prijslijst voor schermreparaties aan.
+   Snel starten: **Importeren…** met een preset, bijv. [`presets/telecom-ae.json`](presets/telecom-ae.json). Met **Exporteren…** neem je je instellingen mee naar een andere pc of winkel.
 3. **Nieuwe advertentie**: kies type → zoek model → vul opslag, kleur, staat, batterij, garantie en prijs in.
 4. Klik **Invullen op Marktplaats**. De eerste keer opent een browservenster: log daar 1x in (per browser). Daarna onthoudt de app dat.
    Firefox: de app downloadt eenmalig een eigen Firefox (±90 MB, ±20 sec), omdat de besturing alleen met die versie werkt. Een eigen geïnstalleerde Firefox is niet nodig.

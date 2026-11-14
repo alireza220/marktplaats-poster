@@ -40,11 +40,28 @@ test('categoryFor en plaatsUrl', () => {
     'https://www.marktplaats.nl/plaats/820/3041?bucketId=426&title=Watch%209');
 });
 
-test('wantedForLabel en adTitle', () => {
+test('renderTitle: winkelnaam vooraan, lege velden weg, max 60 op woordgrens', () => {
+  const tpl = '{winkelkort} | {merk} {model} {opslag} {kleurnl} {staat} & Garantie';
+  assert.equal(m.renderTitle(tpl, { winkelkort: 'Telecom AE', merk: 'Samsung', model: 'A07', opslag: '64GB', kleurnl: 'zwart', staat: 'Nieuw' }),
+    'Telecom AE | Samsung A07 64GB zwart Nieuw & Garantie');
+  assert.equal(m.renderTitle(tpl, { merk: 'Apple', model: 'iPhone 13', staat: 'Gebruikt' }), 'Apple iPhone 13 Gebruikt & Garantie');
+  const lang = m.renderTitle(tpl, { winkelkort: 'Telecom AE', merk: 'Apple', model: 'iPhone 13 Pro Max', opslag: '256GB', kleurnl: 'zilver', staat: 'Zo goed als nieuw' });
+  assert.ok(lang.length <= 60, lang);
+  assert.doesNotMatch(lang, /[&|\s]$/);
+  assert.equal(m.renderTitle('{winkelkort} l {model} Scherm incl monteren garantie', { winkelkort: 'Telecom AE', model: 'iPhone 16 Plus' }),
+    'Telecom AE l iPhone 16 Plus Scherm incl monteren garantie');
+});
+
+test('shopBlock: openingstijden over meerdere regels, lege velden weg', () => {
+  const out = m.shopBlock({ tekst: 'Contact:\n{naam}\n{website}\n\nOpeningstijden:\n{openingstijden}', naam: 'Winkel', openingstijden: 'ma 13-18\ndi 10-18' });
+  assert.equal(out, 'Contact:\nWinkel\n\nOpeningstijden:\nma 13-18\ndi 10-18');
+  assert.equal(m.merkGroep('Apple'), 'Apple');
+  assert.equal(m.merkGroep('Xiaomi'), 'Overig');
+});
+
+test('wantedForLabel', () => {
   const ad = { kind: 'telefoon', merk: 'Apple', model: 'iPhone 13', opslag: '128GB', kleur: 'Midnight', staat: 'Refurbished', batterij: '89', cameraMp: '12' };
   assert.deepEqual(m.wantedForLabel('Conditie', ad), ['Refurbished', 'Zo goed als nieuw']);
   assert.deepEqual(m.wantedForLabel('Resolutie camera', ad), ['10 megapixel of meer']);
   assert.equal(m.wantedForLabel('Onbekend veld', ad), null);
-  assert.equal(m.adTitle(ad), 'Apple iPhone 13 128GB Midnight 89% batterij');
-  assert.equal(m.adTitle({ kind: 'reparatie', merk: 'Apple', model: 'iPhone 13' }), 'Apple iPhone 13 scherm reparatie');
 });

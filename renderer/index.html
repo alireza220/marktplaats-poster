@@ -97,8 +97,10 @@
       <div class="kolommen">
         <form class="kaart" id="winkel">
           <h2>Winkelgegevens</h2>
-          <p class="klein">Komen onder elke advertentie via <code>{winkel}</code>.</p>
-          <label>Naam winkel <input name="naam"></label>
+          <div class="raster">
+            <label>Naam winkel <input name="naam" placeholder="bijv. Telecom A&amp;E"></label>
+            <label>Korte naam voor titel <input name="kort" placeholder="bijv. Telecom AE"></label>
+          </div>
           <label>Adres <input name="adres"></label>
           <div class="raster">
             <label>Postcode <input name="postcode"></label>
@@ -107,12 +109,18 @@
             <label>E-mail <input name="email" type="email"></label>
           </div>
           <label>Website <input name="website"></label>
-          <label>Openingstijden <input name="openingstijden" placeholder="ma-za 10:00-18:00"></label>
-          <label>Extra tekst <textarea name="extra" rows="3"></textarea></label>
+          <label>Openingstijden <textarea name="openingstijden" rows="4" placeholder="Maandag 13:00 - 18:00&#10;Dinsdag t/m zaterdag 10:00 - 18:00"></textarea></label>
+          <label>Winkeltekst onder elke advertentie (<code>{winkel}</code>)
+            <textarea name="tekst" rows="12"></textarea></label>
+          <p class="klein">Velden: <code>{naam} {adres} {postcode} {plaats} {telefoon} {email} {website} {openingstijden}</code></p>
           <label>Levering <select name="levering">
             <option>Ophalen</option><option>Ophalen of Verzenden</option><option>Verzenden</option>
           </select></label>
           <button class="primair">Opslaan</button>
+          <h2>Instellingen meenemen</h2>
+          <p class="klein">Winkelgegevens, sjablonen en prijslijsten naar een andere pc of winkel overzetten.</p>
+          <button type="button" id="exporteer" class="secundair">Exporteren…</button>
+          <button type="button" id="importeer" class="secundair">Importeren…</button>
         </form>
 
         <div class="kaart">
@@ -127,9 +135,15 @@
           </form>
           <form id="sjablonen">
             <h2>Sjablonen</h2>
-            <p class="klein">Velden: <code>{merk} {model} {opslag} {kleur} {staat} {batterij} {garantie} {opmerking} {prijs} {specs} {winkel}</code>. Een regel met een leeg veld valt weg.</p>
-            <label>Toestel (telefoon/smartwatch) <textarea name="toestel" rows="10"></textarea></label>
-            <label>Schermreparatie <textarea name="reparatie" rows="8"></textarea></label>
+            <p class="klein">Velden: <code>{winkelnaam} {winkelkort} {merk} {model} {opslag} {kleur} {kleurnl} {staat} {batterij} {garantie} {opmerking} {prijs} {specs} {prijslijst} {winkel}</code>. In de tekst valt een regel met een leeg veld weg. Titels worden afgekapt op 60 tekens.</p>
+            <label>Titel toestel <input name="titelToestel"></label>
+            <label>Tekst toestel (telefoon/smartwatch) <textarea name="toestel" rows="10"></textarea></label>
+            <label>Titel schermreparatie <input name="titelReparatie"></label>
+            <label>Tekst schermreparatie <textarea name="reparatie" rows="9"></textarea></label>
+            <h2>Prijslijst schermreparatie (<code>{prijslijst}</code>)</h2>
+            <label>Apple <textarea name="prijslijstApple" rows="8" placeholder="- iPhone 16 / 16 Plus €99&#10;- iPhone 15 Pro €119"></textarea></label>
+            <label>Samsung <textarea name="prijslijstSamsung" rows="6"></textarea></label>
+            <label>Overige merken <textarea name="prijslijstOverig" rows="4"></textarea></label>
             <button class="primair">Opslaan</button>
           </form>
           <form id="uitwijk">
