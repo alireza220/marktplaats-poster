@@ -27,7 +27,12 @@ npm install
 npm start        # app starten
 npm test         # unit tests
 npm run dist     # installer bouwen in dist/
+node build/render-icon.js   # logo.svg opnieuw naar icon.png renderen
 ```
+
+Build faalt met "Cannot create symbolic link"? Pak de winCodeSign-cache eenmalig uit zonder macOS-bestanden:
+`7za x <cache>\winCodeSign\<nummer>.7z -o<cache>\winCodeSign\winCodeSign-2.6.0 -xr!darwin`
+(`<cache>` = `%LOCALAPPDATA%\electron-builder\Cache`, `7za` staat in `node_modules\7zip-bin\win\x64`).
 
 ## Nieuwe versie uitbrengen (auto-update)
 

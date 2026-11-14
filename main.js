@@ -121,7 +121,7 @@ for (const [name, fn] of Object.entries(handlers)) {
 
 app.whenReady().then(() => {
   const win = new BrowserWindow({
-    width: 1200, height: 860, title: 'Marktplaats Poster',
+    width: 1200, height: 860, title: 'Marktplaats Poster', icon: path.join(__dirname, 'renderer', 'icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.js') },
   });
   win.removeMenu();

@@ -23,7 +23,8 @@
     "productName": "Marktplaats Poster",
     "files": ["main.js", "preload.js", "lib/**", "renderer/**"],
     "asarUnpack": ["node_modules/playwright-core/**"],
-    "win": { "target": "nsis", "signAndEditExecutable": false },
+    "icon": "build/icon.png",
+    "win": { "target": "nsis" },
     "nsis": { "oneClick": true, "perMachine": false },
     "publish": { "provider": "github", "owner": "alireza220", "repo": "marktplaats-poster" }
   }

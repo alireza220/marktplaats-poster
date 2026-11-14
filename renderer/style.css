@@ -5,7 +5,8 @@
 * { box-sizing: border-box; }
 body { margin: 0; font: 14px/1.45 "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--tekst); }
 header { display: flex; align-items: center; gap: 24px; padding: 10px 20px; background: var(--kaart); border-bottom: 1px solid var(--rand); position: sticky; top: 0; z-index: 2; }
-h1 { font-size: 17px; margin: 0; }
+h1 { font-size: 17px; margin: 0; display: flex; align-items: center; gap: 10px; }
+.logo { width: 30px; height: 30px; }
 nav { display: flex; gap: 4px; flex: 1; }
 nav button { background: none; border: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer; font: inherit; color: var(--zacht); }
 nav button.actief { background: #e8f0fb; color: var(--blauw); font-weight: 600; }
