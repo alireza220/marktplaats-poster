@@ -79,7 +79,8 @@ function buildAd(ad) {
   };
   full.titel = ad.titel || renderTitle(data.templates[isRep ? 'titelReparatie' : 'titelToestel'], vars);
   const beschrijving = ad.beschrijving || renderTemplate(data.templates[isRep ? 'reparatie' : 'toestel'], vars);
-  return { full, beschrijving, fotos: model.fotos.filter((f) => fs.existsSync(f)) };
+  const uit = model.uitgesloten || [];
+  return { full, beschrijving, fotos: model.fotos.filter((f) => fs.existsSync(f) && !uit.includes(f)) };
 }
 
 const handlers = {
@@ -99,9 +100,18 @@ const handlers = {
   },
   'models:get': async (item, opnieuw) => {
     if (!opnieuw && data.models[item.id]) return data.models[item.id];
-    data.models[item.id] = await gsm.fetchModel(item, path.join(DIR, 'fotos', item.id));
+    const oud = data.models[item.id];
+    data.models[item.id] = { ...await gsm.fetchModel(item, path.join(DIR, 'fotos', item.id)), uitgesloten: oud?.uitgesloten || [] };
     save();
     return data.models[item.id];
+  },
+
+  // Foto's die niet mee moeten (bijv. een persfoto van de binnenkant), onthouden per model
+  'models:fotos': (id, uitgesloten) => {
+    const m = data.models[id];
+    m.uitgesloten = uitgesloten.filter((f) => m.fotos.includes(f));
+    save();
+    return m;
   },
 
   'ad:preview': (ad) => { const { full, beschrijving } = buildAd(ad); return { titel: full.titel, beschrijving, mpKleur: full.mpKleur }; },
@@ -157,8 +167,17 @@ for (const [name, fn] of Object.entries(handlers)) {
   });
 }
 
+// Maar één app tegelijk: twee apps zouden hetzelfde browserprofiel en data.json delen
+if (!app.requestSingleInstanceLock()) app.quit();
+let win = null;
+app.on('second-instance', () => {
+  if (!win) return;
+  if (win.isMinimized()) win.restore();
+  win.focus();
+});
+
 app.whenReady().then(() => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1200, height: 860, title: 'Marktplaats Poster', icon: path.join(__dirname, 'renderer', 'icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.js') },
   });

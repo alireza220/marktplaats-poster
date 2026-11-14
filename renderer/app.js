@@ -73,13 +73,28 @@ async function kiesModel(item, opnieuw = false) {
   const s = model.specs;
   $('#model-naam').textContent = `${model.brand} ${model.name}`;
   $('#model-specs').textContent = [s.chipset, s.maxGhz && `${s.maxGhz} GHz`, s.scherm, s.netwerk, s.jaar].filter(Boolean).join(' · ');
-  $('#fotos').innerHTML = model.fotos.map((f) => `<img src="${esc(fileUrl(f))}" alt="">`).join('') || '<span class="klein">Geen foto\'s gevonden</span>';
+  toonFotos();
   const opties = (lijst) => lijst.map((v) => `<option>${esc(v)}</option>`).join('');
   $('#opslag').innerHTML = opties(s.opslag.length ? s.opslag : ['']);
   $('#kleur').innerHTML = opties(s.kleuren.length ? s.kleuren : ['']);
   $('#model').hidden = $('#velden').hidden = $('#voorbeeld-kaart').hidden = false;
   await vulLaatstePrijs();
   await voorbeeld();
+}
+// Klik op een foto = overslaan / weer gebruiken (onthouden per model)
+function toonFotos() {
+  const uit = new Set(model.uitgesloten || []);
+  $('#fotos').innerHTML = model.fotos.map((f, i) => `<button type="button" class="foto${uit.has(f) ? ' uit' : ''}" data-i="${i}"
+    title="${uit.has(f) ? 'Wordt overgeslagen. Klik om wel te gebruiken' : 'Klik om deze foto over te slaan'}" aria-pressed="${!uit.has(f)}"><img src="${esc(fileUrl(f))}" alt="Foto ${i + 1}"></button>`).join('')
+    || '<span class="klein">Geen foto\'s gevonden</span>';
+  $('#fotos-hint').hidden = !model.fotos.length;
+  $$('#fotos .foto').forEach((b) => b.addEventListener('click', async () => {
+    const f = model.fotos[b.dataset.i];
+    const nieuw = uit.has(f) ? [...uit].filter((x) => x !== f) : [...uit, f];
+    model = await call('models:fotos', model.id, nieuw);
+    data.models[model.id] = model;
+    toonFotos();
+  }));
 }
 $('#model-opnieuw').addEventListener('click', () => gekozen && kiesModel(gekozen, true));
 
