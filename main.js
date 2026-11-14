@@ -8,7 +8,6 @@ const { renderTemplate, shopBlock, adTitle, mpColor, CATEGORIES } = require('./l
 const DIR = app.getPath('userData');
 const DATA_FILE = path.join(DIR, 'data.json');
 const LIST_FILE = path.join(DIR, 'modellijst.json');
-const PROFILE_DIR = path.join(DIR, 'edge-profiel');
 
 const DEFAULTS = {
   shop: { naam: '', adres: '', postcode: '', plaats: '', telefoon: '', email: '', website: '', openingstijden: '', extra: 'Inruil mogelijk. Betalen met pin of contant.', levering: 'Ophalen' },
@@ -22,12 +21,14 @@ const DEFAULTS = {
   ads: [],
   lastPrices: {},
   ingelogdGeweest: false,
+  browser: 'msedge', // msedge | chrome | firefox, standaard voor deze pc
 };
 
 function load() {
   try { return { ...DEFAULTS, ...JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')) }; } catch { return structuredClone(DEFAULTS); }
 }
 let data = load();
+mp.setBrowser(DIR, data.browser);
 function save() {
   // eerst naar tmp, dan hernoemen: een crash tijdens schrijven sloopt data.json niet
   fs.writeFileSync(DATA_FILE + '.tmp', JSON.stringify(data, null, 1));
@@ -66,7 +67,11 @@ function buildAd(ad) {
 
 const handlers = {
   'data:get': () => data,
-  'data:set': (key, value) => { data[key] = value; save(); return data; },
+  'data:set': (key, value) => {
+    data[key] = value; save();
+    if (key === 'browser') mp.setBrowser(DIR, value);
+    return data;
+  },
 
   'models:search': async (q, smartwatch) => {
     const words = String(q).toLowerCase().split(/\s+/).filter(Boolean);
@@ -88,7 +93,7 @@ const handlers = {
     const { full, beschrijving, fotos } = buildAd(ad);
     const uitwijkKey = data.uitwijk[ad.kind];
     const result = await mp.fillAd(full, {
-      profileDir: PROFILE_DIR, beschrijving, fotos, shop: data.shop,
+      beschrijving, fotos, shop: data.shop,
       uitwijk: uitwijkKey ? CATEGORIES[uitwijkKey] : null,
     });
     data.lastPrices[priceKey(ad)] = ad.prijs;
@@ -101,11 +106,11 @@ const handlers = {
   },
   'ads:delete': (id) => { data.ads = data.ads.filter((a) => a.id !== id); save(); return data; },
   'listings:get': async () => {
-    const list = await mp.fetchListings(PROFILE_DIR);
+    const list = await mp.fetchListings();
     data.ingelogdGeweest = true; save();
     return list;
   },
-  'browser:open': async () => { await mp.getPage(PROFILE_DIR); },
+  'browser:open': async () => { await mp.getPage(); },
 };
 
 for (const [name, fn] of Object.entries(handlers)) {

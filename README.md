@@ -6,10 +6,11 @@ Specs en officiële foto's komen automatisch van GSMArena. Jij klikt zelf op **P
 ## Gebruik
 
 1. Installeer `Marktplaats Poster Setup x.y.z.exe`.
-2. **Instellingen**: vul je winkelgegevens in (komen onder elke advertentie) en pas eventueel de sjablonen aan.
+2. **Instellingen**: kies je browser (Edge, Chrome of Firefox, wordt onthouden als standaard), vul je winkelgegevens in (komen onder elke advertentie) en pas eventueel de sjablonen aan.
 3. **Nieuwe advertentie**: kies type → zoek model → vul opslag, kleur, staat, batterij, garantie en prijs in.
-4. Klik **Invullen op Marktplaats**. De eerste keer opent een Edge-venster: log daar 1x in. Daarna onthoudt de app dat.
-5. Controleer het formulier in Edge en klik zelf op **Plaats je advertentie** (de knop is oranje omrand).
+4. Klik **Invullen op Marktplaats**. De eerste keer opent een browservenster: log daar 1x in (per browser). Daarna onthoudt de app dat.
+   Firefox: de app downloadt eenmalig een eigen Firefox (±90 MB, ±20 sec), omdat de besturing alleen met die versie werkt. Een eigen geïnstalleerde Firefox is niet nodig.
+5. Controleer het formulier en klik zelf op **Plaats je advertentie** (de knop is oranje omrand).
 
 **Advertenties**: overzicht van je online advertenties met verloopdatum. Bij opstarten meldt de app wat binnen 3 dagen verloopt.
 "Opnieuw plaatsen" werkt voor advertenties die via de app zijn ingevuld (herkend op titel).
@@ -17,7 +18,7 @@ Specs en officiële foto's komen automatisch van GSMArena. Jij klikt zelf op **P
 **Betaalde categorie**: is de gewone categorie betaald, dan wijkt de app uit naar *Telefoon-accessoires > Toebehoren en Onderdelen*
 (instelbaar per type bij Instellingen). Let op: Marktplaats kan advertenties in een verkeerde categorie verwijderen.
 
-Data staat lokaal in `%APPDATA%\Marktplaats Poster\` (`data.json`, foto's, Edge-profiel).
+Data staat lokaal in `%APPDATA%\Marktplaats Poster\` (`data.json`, foto's, een browserprofiel per browser).
 
 ## Ontwikkelen
 

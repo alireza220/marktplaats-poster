@@ -23,7 +23,11 @@ function toonTab(naam) {
   $$('main > section').forEach((s) => { s.hidden = s.id !== `tab-${naam}`; });
 }
 $$('nav button').forEach((b) => b.addEventListener('click', () => toonTab(b.dataset.tab)));
-$('#open-browser').addEventListener('click', () => call('browser:open'));
+$('#open-browser').addEventListener('click', async () => {
+  if (data.browser === 'firefox') melding('Firefox openen… de eerste keer wordt Firefox eerst gedownload (±1 minuut).');
+  await call('browser:open');
+  melding('');
+});
 
 // ---------- nieuwe advertentie ----------
 const soort = () => $('input[name=soort]:checked').value;
@@ -113,7 +117,7 @@ $('#invullen').addEventListener('click', async () => {
   const knop = $('#invullen');
   knop.disabled = true; knop.textContent = 'Bezig met invullen…';
   $('#log').innerHTML = '';
-  melding('Het Marktplaats-venster opent. Niet ingelogd? Log daar in, de app gaat daarna vanzelf verder.');
+  melding(`Het Marktplaats-venster opent${data.browser === 'firefox' ? ' (eerste keer: Firefox wordt eerst gedownload, ±1 minuut)' : ''}. Niet ingelogd? Log daar in, de app gaat daarna vanzelf verder.`);
   try {
     const res = await call('ad:fill', formAd());
     $('#log').innerHTML = res.log.map((l) => `<li class="${l.ok ? '' : 'fout'}"><b>${esc(l.naam)}</b> ${esc(l.info)}</li>`).join('');
@@ -193,6 +197,11 @@ function opslaanForm(id, key, omzetten = (v) => v) {
     setTimeout(() => melding(''), 2000);
   });
 }
+$('#browser').addEventListener('change', async (e) => {
+  data = await call('data:set', 'browser', e.target.value);
+  melding(`${e.target.selectedOptions[0].text} is nu de standaardbrowser.`);
+  setTimeout(() => melding(''), 2500);
+});
 opslaanForm('#winkel', 'shop');
 opslaanForm('#sjablonen', 'templates');
 opslaanForm('#uitwijk', 'uitwijk', (v) => Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x || null])));
@@ -200,6 +209,7 @@ opslaanForm('#uitwijk', 'uitwijk', (v) => Object.fromEntries(Object.entries(v).m
 // ---------- start ----------
 (async () => {
   data = await call('data:get');
+  $('#browser').value = data.browser;
   vulForm($('#winkel'), data.shop);
   vulForm($('#sjablonen'), data.templates);
   vulForm($('#uitwijk'), Object.fromEntries(Object.entries(data.uitwijk).map(([k, v]) => [k, v || ''])));

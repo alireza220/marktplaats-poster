@@ -7,7 +7,8 @@ De gebruiker klikt zelf op "Plaats je advertentie". Geen officiële Marktplaats-
 
 | Onderwerp | Keuze |
 |---|---|
-| Vorm | Desktop-app (Electron), bestuurt een eigen Edge-venster (Playwright, vast profiel, 1x inloggen) |
+| Vorm | Desktop-app (Electron), bestuurt een eigen browservenster (Playwright, vast profiel, 1x inloggen) |
+| Browser | Keuze Edge / Chrome / Firefox, opgeslagen als standaard per pc. Edge en Chrome: de geïnstalleerde browser. Firefox: Playwright-build, eenmalig gedownload (Playwright kan gewone Firefox niet besturen) |
 | Laatste klik | Gebruiker klikt zelf op Plaatsen |
 | Gebruikers | 1 pc per winkel, alle data lokaal (`%APPDATA%/marktplaats-poster/data.json`) |
 | Delen | Gratis Windows-installer, auto-update via GitHub Releases, geen licentie |
