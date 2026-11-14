@@ -1,7 +1,7 @@
 {
   "name": "marktplaats-poster",
   "productName": "Marktplaats Poster",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vult Marktplaats-advertenties in voor telefoonwinkels",
   "main": "main.js",
   "scripts": {
@@ -21,11 +21,28 @@
   "build": {
     "appId": "nl.marktplaatsposter.app",
     "productName": "Marktplaats Poster",
-    "files": ["main.js", "preload.js", "lib/**", "renderer/**"],
-    "asarUnpack": ["node_modules/playwright-core/**"],
+    "files": [
+      "main.js",
+      "preload.js",
+      "lib/**",
+      "renderer/**"
+    ],
+    "asarUnpack": [
+      "node_modules/playwright-core/**"
+    ],
     "icon": "build/icon.png",
-    "win": { "target": "nsis" },
-    "nsis": { "oneClick": true, "perMachine": false, "artifactName": "Marktplaats-Poster-Setup.${ext}" },
-    "publish": { "provider": "github", "owner": "alireza220", "repo": "marktplaats-poster" }
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "artifactName": "Marktplaats-Poster-Setup.${ext}"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "alireza220",
+      "repo": "marktplaats-poster"
+    }
   }
 }
