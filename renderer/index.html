@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' file: https:; style-src 'self' 'unsafe-inline'">
+  <title>Marktplaats Poster</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Marktplaats Poster</h1>
+    <nav>
+      <button data-tab="nieuw" class="actief">Nieuwe advertentie</button>
+      <button data-tab="advertenties">Advertenties</button>
+      <button data-tab="instellingen">Instellingen</button>
+    </nav>
+    <button id="open-browser" class="secundair">Marktplaats-venster openen</button>
+  </header>
+
+  <div id="melding" hidden></div>
+
+  <main>
+    <!-- NIEUWE ADVERTENTIE -->
+    <section id="tab-nieuw">
+      <div class="kolommen">
+        <div class="kaart">
+          <h2>1. Wat wil je plaatsen?</h2>
+          <div class="keuze" id="soort">
+            <label><input type="radio" name="soort" value="telefoon" checked> Telefoon</label>
+            <label><input type="radio" name="soort" value="smartwatch"> Smartwatch</label>
+            <label><input type="radio" name="soort" value="reparatie"> Schermreparatie</label>
+          </div>
+
+          <h2>2. Model</h2>
+          <input id="zoek" type="search" placeholder="Zoek model, bijv. iphone 13 of galaxy s23" autocomplete="off">
+          <ul id="resultaten" class="resultaten"></ul>
+          <div id="model" hidden>
+            <div class="model-kop">
+              <strong id="model-naam"></strong>
+              <button id="model-opnieuw" class="link">specs opnieuw ophalen</button>
+            </div>
+            <p id="model-specs" class="klein"></p>
+            <div id="fotos" class="fotos"></div>
+          </div>
+
+          <div id="velden" hidden>
+            <h2>3. Gegevens</h2>
+            <div class="raster">
+              <label class="toestel">Opslag <select id="opslag"></select></label>
+              <label class="toestel">Kleur <select id="kleur"></select></label>
+              <label class="toestel">Kleur op Marktplaats <select id="mpKleur">
+                <option value="">automatisch</option>
+                <option>Zwart</option><option>Wit</option><option>Grijs</option><option>Zilver</option><option>Goud</option>
+                <option>Blauw</option><option>Groen</option><option>Paars</option><option>Rood</option><option>Roze</option><option>Geel</option><option>Oranje</option>
+              </select></label>
+              <label class="toestel">Staat <select id="staat">
+                <option>Nieuw</option><option>Refurbished</option><option selected>Zo goed als nieuw</option><option>Gebruikt</option><option>Niet werkend</option>
+              </select></label>
+              <label class="toestel">Batterijconditie % <input id="batterij" type="number" min="1" max="100"></label>
+              <label>Garantie (maanden) <input id="garantie" type="number" min="0" value="3"></label>
+              <label>Prijs € <input id="prijs" type="number" min="0" step="1" required></label>
+              <label class="toestel breed">Opmerking / schade <input id="opmerking" placeholder="bijv. klein krasje op achterkant"></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="kaart" id="voorbeeld-kaart" hidden>
+          <h2>4. Voorbeeld</h2>
+          <label>Titel <input id="titel" maxlength="60"></label>
+          <label>Beschrijving <textarea id="beschrijving" rows="18"></textarea></label>
+          <button id="tekst-reset" class="link">tekst opnieuw maken uit sjabloon</button>
+          <button id="invullen" class="primair">Invullen op Marktplaats</button>
+          <p class="klein">De app vult alles in. Controleer het formulier en klik zelf op <b>Plaats je advertentie</b>.</p>
+          <ul id="log" class="log"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADVERTENTIES -->
+    <section id="tab-advertenties" hidden>
+      <div class="kaart">
+        <div class="model-kop">
+          <h2>Online op Marktplaats</h2>
+          <button id="vernieuwen" class="secundair">Vernieuwen</button>
+        </div>
+        <table id="online"><thead><tr><th>Titel</th><th>Categorie</th><th>Verloopt</th><th>Bekeken</th><th></th></tr></thead><tbody></tbody></table>
+        <p id="online-leeg" class="klein">Klik op Vernieuwen om je advertenties op te halen.</p>
+      </div>
+      <div class="kaart">
+        <h2>Opgeslagen advertenties</h2>
+        <table id="opgeslagen"><thead><tr><th>Titel</th><th>Prijs</th><th>Laatst ingevuld</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </section>
+
+    <!-- INSTELLINGEN -->
+    <section id="tab-instellingen" hidden>
+      <div class="kolommen">
+        <form class="kaart" id="winkel">
+          <h2>Winkelgegevens</h2>
+          <p class="klein">Komen onder elke advertentie via <code>{winkel}</code>.</p>
+          <label>Naam winkel <input name="naam"></label>
+          <label>Adres <input name="adres"></label>
+          <div class="raster">
+            <label>Postcode <input name="postcode"></label>
+            <label>Plaats <input name="plaats"></label>
+            <label>Telefoon <input name="telefoon"></label>
+            <label>E-mail <input name="email" type="email"></label>
+          </div>
+          <label>Website <input name="website"></label>
+          <label>Openingstijden <input name="openingstijden" placeholder="ma-za 10:00-18:00"></label>
+          <label>Extra tekst <textarea name="extra" rows="3"></textarea></label>
+          <label>Levering <select name="levering">
+            <option>Ophalen</option><option>Ophalen of Verzenden</option><option>Verzenden</option>
+          </select></label>
+          <button class="primair">Opslaan</button>
+        </form>
+
+        <div class="kaart">
+          <form id="sjablonen">
+            <h2>Sjablonen</h2>
+            <p class="klein">Velden: <code>{merk} {model} {opslag} {kleur} {staat} {batterij} {garantie} {opmerking} {prijs} {specs} {winkel}</code>. Een regel met een leeg veld valt weg.</p>
+            <label>Toestel (telefoon/smartwatch) <textarea name="toestel" rows="10"></textarea></label>
+            <label>Schermreparatie <textarea name="reparatie" rows="8"></textarea></label>
+            <button class="primair">Opslaan</button>
+          </form>
+          <form id="uitwijk">
+            <h2>Als de categorie betaald is</h2>
+            <label>Telefoon <select name="telefoon"><option value="toebehoren">Uitwijken naar Toebehoren en Onderdelen</option><option value="">Niet uitwijken (betalen)</option></select></label>
+            <label>Smartwatch <select name="smartwatch"><option value="toebehoren">Uitwijken naar Toebehoren en Onderdelen</option><option value="">Niet uitwijken (betalen)</option></select></label>
+            <label>Schermreparatie <select name="reparatie"><option value="">Niet uitwijken (betalen)</option><option value="toebehoren">Uitwijken naar Toebehoren en Onderdelen</option></select></label>
+            <p class="klein">Let op: Marktplaats kan advertenties in een verkeerde categorie verwijderen.</p>
+            <button class="primair">Opslaan</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
