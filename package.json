@@ -25,7 +25,7 @@
     "asarUnpack": ["node_modules/playwright-core/**"],
     "icon": "build/icon.png",
     "win": { "target": "nsis" },
-    "nsis": { "oneClick": true, "perMachine": false },
+    "nsis": { "oneClick": true, "perMachine": false, "artifactName": "Marktplaats-Poster-Setup.${ext}" },
     "publish": { "provider": "github", "owner": "alireza220", "repo": "marktplaats-poster" }
   }
 }

@@ -3,9 +3,15 @@
 Windows-app die Marktplaats-advertenties invult voor telefoonwinkels: toestellen (telefoon/smartwatch) en schermreparaties.
 Specs en officiële foto's komen automatisch van GSMArena. Jij klikt zelf op **Plaats je advertentie**.
 
+## Downloaden
+
+**[Download Marktplaats Poster voor Windows](https://github.com/alireza220/marktplaats-poster/releases/latest/download/Marktplaats-Poster-Setup.exe)** (altijd de nieuwste versie)
+
+Toont Windows "Windows heeft uw pc beschermd"? Klik op **Meer informatie** en daarna **Toch uitvoeren** (de installer is niet digitaal ondertekend). Nieuwe versies installeren zichzelf bij het opstarten.
+
 ## Gebruik
 
-1. Installeer `Marktplaats Poster Setup x.y.z.exe`.
+1. Download en installeer de app (zie hierboven).
 2. **Instellingen**: kies je browser (Edge, Chrome of Firefox, wordt onthouden als standaard), vul je winkelgegevens in en pas de titel- en tekstsjablonen, het winkelblok en de prijslijst voor schermreparaties aan.
    Snel starten: **Importeren…** met een preset, bijv. [`presets/telecom-ae.json`](presets/telecom-ae.json). Met **Exporteren…** neem je je instellingen mee naar een andere pc of winkel.
 3. **Nieuwe advertentie**: kies type → zoek model → vul opslag, kleur, staat, batterij, garantie en prijs in.
@@ -38,9 +44,9 @@ Build faalt met "Cannot create symbolic link"? Pak de winCodeSign-cache eenmalig
 ## Nieuwe versie uitbrengen (auto-update)
 
 1. Verhoog `version` in `package.json`.
-2. `set GH_TOKEN=<github token met repo-rechten>` en `npm run release`. Dit maakt een concept-release op GitHub.
-3. Publiceer de release op GitHub. Geïnstalleerde apps updaten zichzelf bij de volgende start.
+2. `set GH_TOKEN=<github token met repo-rechten>` en `npm run release`. Dit maakt een concept-release op GitHub met `Marktplaats-Poster-Setup.exe` en `latest.yml`.
+3. Publiceer de release op GitHub (`gh release edit vX.Y.Z --draft=false --latest`). Geïnstalleerde apps updaten zichzelf bij de volgende start.
 
-Auto-update werkt alleen als de repository (of in elk geval de releases) **publiek** is.
+Auto-update werkt alleen zolang de repository publiek is.
 
 Zie `docs/ontwerp.md` voor alle ontwerpkeuzes en gemeten Marktplaats-feiten.
