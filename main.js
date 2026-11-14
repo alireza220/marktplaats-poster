@@ -15,8 +15,8 @@ const DEFAULTS = {
   templates: {
     titelToestel: '{winkelkort} | {merk} {model} {opslag} {kleurnl} {staatkort} [& Garantie|& Gar.]',
     titelReparatie: '{winkelkort} | {model} Scherm incl. montage [& Garantie|& Gar.]',
-    toestel: '📱 {merk} {model} | {opslag} | {kleurnl} | {staat}\nNu verkrijgbaar bij {winkelnaam}!\n\n✅ {garantie} maanden garantie\n🔋 Batterijconditie: {batterij}%\nℹ️ Opmerking: {opmerking}\n\nSpecificaties\n{specs}\n\n{winkel}',
-    reparatie: '🔧 {merk} {model} scherm vervangen, incl. montage & garantie\nScherm kapot? Bij {winkelnaam} vervangen we het snel en vakkundig.\n\n✅ {garantie} maanden garantie\n💶 Prijs: € {prijs} incl. montage\n\nOok voor andere schade of problemen kun je bij ons terecht!\n\nPrijslijst schermreparatie\n{prijslijst}\n\n{winkel}',
+    toestel: '{merk} {model} | {opslag} | {kleurnl} | {staat}\nNu verkrijgbaar bij {winkelnaam}!\n\n• {garantie} maanden garantie\n• Batterijconditie: {batterij}%\n• Opmerking: {opmerking}\n\nSpecificaties:\n{specs}\n\n{winkel}',
+    reparatie: '{merk} {model} scherm vervangen, incl. montage & garantie\nScherm kapot? Bij {winkelnaam} vervangen we het snel en vakkundig.\n\n• {garantie} maanden garantie\n• Prijs: € {prijs} incl. montage\n\nOok voor andere schade of problemen kun je bij ons terecht!\n\nPrijslijst schermreparatie:\n{prijslijst}\n\n{winkel}',
     // {prijslijst} in de reparatietekst, gekozen op merk
     prijslijstApple: '', prijslijstSamsung: '', prijslijstOverig: '',
   },

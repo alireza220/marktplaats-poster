@@ -9,17 +9,21 @@
   "email": "",
   "website": "",
   "openingstijden": "Maandag: 13:00 – 18:00\nDinsdag t/m zaterdag: 10:00 – 18:00\nDonderdag: koopavond tot 21:00\nKoopzondag: 10:00 – 17:00",
-  "tekst": "━━━━━━━━━━━━━━━━━━━━\n🏪 {naam}\nBekijk ook onze andere advertenties of kom langs in de winkel voor ons volledige aanbod!\n\n🔧 Ook voor:\n• Reparatie van je toestel (ook waterschade)\n• Verkoop en inruil van je toestel\n• Simlockvrij maken (unlocken)\n• GSM-onderdelen en accessoires\n\n📍 {adres}, {postcode} {plaats}\n📞 {telefoon}\n✉️ {email}\n🌐 {website}\n\n🕒 Openingstijden\n{openingstijden}",
+  "tekst": "{naam}\nBekijk ook onze andere advertenties of kom langs in de winkel voor ons volledige aanbod!\n\nU kunt bij ons ook terecht voor:\n• Reparatie van uw toestel (ook waterschade)\n• Verkoop en inruil van uw toestel\n• Simlockvrij maken (unlocken)\n• GSM-onderdelen en accessoires\n\nAdres: {adres}, {postcode} {plaats}\nTelefoon: {telefoon}\nE-mail: {email}\nWebsite: {website}\n\nOpeningstijden:\n{openingstijden}",
   "levering": "Ophalen of Verzenden"
  },
  "templates": {
   "titelToestel": "{winkelkort} | {merk} {model} {opslag} {kleurnl} {staatkort} [& Garantie|& Gar.]",
   "titelReparatie": "{winkelkort} | {model} Scherm incl. montage [& Garantie|& Gar.]",
-  "toestel": "📱 {merk} {model} | {opslag} | {kleurnl} | {staat}\nNu verkrijgbaar bij {winkelnaam}!\n\n✅ {garantie} maanden garantie\n🔋 Batterijconditie: {batterij}%\nℹ️ Opmerking: {opmerking}\n\nSpecificaties\n{specs}\n\n💼 Zakelijke kopers: dit toestel wordt geleverd onder de margeregeling.\n\n{winkel}",
-  "reparatie": "🔧 {merk} {model} scherm vervangen, incl. montage & garantie\nScherm kapot? Bij {winkelnaam} vervangen we het snel en vakkundig, in alle kleuren.\n\n⏱️ Meeste reparaties klaar binnen 30 minuten\n✅ {garantie} maanden garantie\n💶 Prijs: € {prijs} incl. montage\n\nOok voor andere schade, problemen of waterschade kun je bij ons terecht!\n\n📋 Prijslijst schermreparatie\n{prijslijst}\n\n{winkel}",
+  "toestel": "{merk} {model} | {opslag} | {kleurnl} | {staat}\nNu verkrijgbaar bij {winkelnaam}!\n\n• {garantie} maanden garantie\n• Batterijconditie: {batterij}%\n• Opmerking: {opmerking}\n\nSpecificaties:\n{specs}\n\nZakelijke kopers: dit toestel wordt geleverd onder de margeregeling.\n\n{winkel}",
+  "reparatie": "{merk} {model} scherm vervangen, incl. montage & garantie\nScherm kapot? Bij {winkelnaam} vervangen we het snel en vakkundig, in alle kleuren.\n\n• Meeste reparaties klaar binnen 30 minuten\n• {garantie} maanden garantie\n• Prijs: € {prijs} incl. montage\n\nOok voor andere schade, problemen of waterschade kunt u bij ons terecht!\n\nPrijslijst schermreparatie:\n{prijslijst}\n\n{winkel}",
   "prijslijstApple": "• iPhone 17 Pro Max – €149\n• iPhone 17 Pro – €149\n• iPhone 17 – €149\n• iPhone 17 Air – prijs op aanvraag\n• iPhone 16 Pro / 16 Pro Max – €129\n• iPhone 16 / 16 Plus – €99\n• iPhone 16e – €99\n• iPhone 15 Pro Max – €139\n• iPhone 15 Pro – €119\n• iPhone 15 / 15 Plus – €99\n• iPhone 14 Pro / 14 Pro Max – €119\n• iPhone 14 / 14 Plus – €99\n• iPhone 13 Pro / 13 Pro Max – €119\n• iPhone 13 / 13 mini – €99\n• iPhone 12 Pro / 12 Pro Max – €89\n• iPhone 12 / 12 mini – €79\n• iPhone 11 Pro / 11 Pro Max – €79\n• iPhone 11 – €69\n• iPhone X / XS / XR – €69\n• iPhone SE 2022 (origineel) – €69\n• iPhone SE 2020 – €49\n• iPhone 8 Plus / 7 Plus / 6S Plus – €49\n• iPhone 8 / 7 – €49",
   "prijslijstSamsung": "",
   "prijslijstOverig": ""
  },
- "uitwijk": { "telefoon": "toebehoren", "smartwatch": "toebehoren", "reparatie": "toebehoren" }
+ "uitwijk": {
+  "telefoon": "toebehoren",
+  "smartwatch": "toebehoren",
+  "reparatie": "toebehoren"
+ }
 }
