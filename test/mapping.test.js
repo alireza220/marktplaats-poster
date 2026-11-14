@@ -52,6 +52,15 @@ test('renderTitle: winkelnaam vooraan, lege velden weg, max 60 op woordgrens', (
     'Telecom AE l iPhone 16 Plus Scherm incl monteren garantie');
 });
 
+test('renderTitle: [& Garantie|& Gar.] wordt korter en valt daarna weg', () => {
+  const tpl = '{winkelkort} | {merk} {model} {opslag} {kleurnl} {staatkort} [& Garantie|& Gar.]';
+  const d = { winkelkort: 'Telecom AE', merk: 'Samsung', kleurnl: 'zwart', staatkort: m.staatKort('Zo goed als nieuw') };
+  assert.equal(m.renderTitle(tpl, { ...d, model: 'Galaxy A07', opslag: '64GB' }), 'Telecom AE | Samsung Galaxy A07 64GB zwart ZGAN & Garantie');
+  assert.equal(m.renderTitle(tpl, { ...d, model: 'Galaxy S24 FE', opslag: '256GB' }), 'Telecom AE | Samsung Galaxy S24 FE 256GB zwart ZGAN & Gar.');
+  assert.equal(m.renderTitle(tpl, { ...d, model: 'Galaxy Z Fold6 Ultra', opslag: '1TB' }), 'Telecom AE | Samsung Galaxy Z Fold6 Ultra 1TB zwart ZGAN');
+  assert.equal(m.staatKort('Nieuw'), 'Nieuw');
+});
+
 test('shopBlock: openingstijden over meerdere regels, lege velden weg', () => {
   const out = m.shopBlock({ tekst: 'Contact:\n{naam}\n{website}\n\nOpeningstijden:\n{openingstijden}', naam: 'Winkel', openingstijden: 'ma 13-18\ndi 10-18' });
   assert.equal(out, 'Contact:\nWinkel\n\nOpeningstijden:\nma 13-18\ndi 10-18');

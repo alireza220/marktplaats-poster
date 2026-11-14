@@ -135,7 +135,8 @@
           </form>
           <form id="sjablonen">
             <h2>Sjablonen</h2>
-            <p class="klein">Velden: <code>{winkelnaam} {winkelkort} {merk} {model} {opslag} {kleur} {kleurnl} {staat} {batterij} {garantie} {opmerking} {prijs} {specs} {prijslijst} {winkel}</code>. In de tekst valt een regel met een leeg veld weg. Titels worden afgekapt op 60 tekens.</p>
+            <p class="klein">Velden: <code>{winkelnaam} {winkelkort} {merk} {model} {opslag} {kleur} {kleurnl} {staat} {staatkort} {batterij} {garantie} {opmerking} {prijs} {specs} {prijslijst} {winkel}</code>. In de tekst valt een regel met een leeg veld weg.<br>
+              Titel (max 60 tekens): <code>{staatkort}</code> maakt van "Zo goed als nieuw" ZGAN. <code>[& Garantie|& Gar.]</code> wordt korter en valt daarna weg als de titel te lang is.</p>
             <label>Titel toestel <input name="titelToestel"></label>
             <label>Tekst toestel (telefoon/smartwatch) <textarea name="toestel" rows="10"></textarea></label>
             <label>Titel schermreparatie <input name="titelReparatie"></label>

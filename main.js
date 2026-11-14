@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const gsm = require('./lib/gsmarena');
 const mp = require('./lib/marktplaats');
-const { renderTemplate, renderTitle, shopBlock, merkGroep, mpColor, CATEGORIES, WINKELTEKST } = require('./lib/mapping');
+const { renderTemplate, renderTitle, staatKort, shopBlock, merkGroep, mpColor, CATEGORIES, WINKELTEKST } = require('./lib/mapping');
 
 const DIR = app.getPath('userData');
 const DATA_FILE = path.join(DIR, 'data.json');
@@ -13,10 +13,10 @@ const DEFAULTS = {
   // kort = winkelnaam vooraan in de titel; tekst = vast winkelblok ({winkel}) onder elke advertentie
   shop: { naam: '', kort: '', adres: '', postcode: '', plaats: '', telefoon: '', email: '', website: '', openingstijden: '', tekst: WINKELTEKST, levering: 'Ophalen of Verzenden' },
   templates: {
-    titelToestel: '{winkelkort} | {merk} {model} {opslag} {kleurnl} {staat} & Garantie',
-    titelReparatie: '{winkelkort} | {model} Scherm incl monteren garantie',
-    toestel: 'Nu bij {winkelnaam}\nDe {merk} {model} {opslag} {kleurnl} {staat}\n\n- Met {garantie} maanden garantie\n- Batterijconditie: {batterij}%\n- Opmerking: {opmerking}\n{specs}\n\n{winkel}',
-    reparatie: 'Nu bij {winkelnaam}\nDe {merk} {model} scherm vervangen, inclusief montage en met garantie.\nOok voor andere schade of problemen kunt u bij ons terecht.\n\nPrijs: € {prijs}\n\n{prijslijst}\n\nMet {garantie} maanden garantie\n\n{winkel}',
+    titelToestel: '{winkelkort} | {merk} {model} {opslag} {kleurnl} {staatkort} [& Garantie|& Gar.]',
+    titelReparatie: '{winkelkort} | {model} Scherm incl. montage [& Garantie|& Gar.]',
+    toestel: '📱 {merk} {model} | {opslag} | {kleurnl} | {staat}\nNu verkrijgbaar bij {winkelnaam}!\n\n✅ {garantie} maanden garantie\n🔋 Batterijconditie: {batterij}%\nℹ️ Opmerking: {opmerking}\n\nSpecificaties\n{specs}\n\n{winkel}',
+    reparatie: '🔧 {merk} {model} scherm vervangen, incl. montage & garantie\nScherm kapot? Bij {winkelnaam} vervangen we het snel en vakkundig.\n\n✅ {garantie} maanden garantie\n💶 Prijs: € {prijs} incl. montage\n\nOok voor andere schade of problemen kun je bij ons terecht!\n\nPrijslijst schermreparatie\n{prijslijst}\n\n{winkel}',
     // {prijslijst} in de reparatietekst, gekozen op merk
     prijslijstApple: '', prijslijstSamsung: '', prijslijstOverig: '',
   },
@@ -70,6 +70,7 @@ function buildAd(ad) {
   const vars = {
     ...full,
     kleurnl: full.mpKleur.toLowerCase(),
+    staatkort: staatKort(full.staat),
     winkelnaam: data.shop.naam,
     winkelkort: data.shop.kort || data.shop.naam,
     specs: gsm.specLines(model.specs),
