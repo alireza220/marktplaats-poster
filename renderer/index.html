@@ -41,7 +41,7 @@
             </div>
             <p id="model-specs" class="klein"></p>
             <div id="fotos" class="fotos"></div>
-            <p id="fotos-hint" class="klein">Klik op een foto om hem over te slaan (bijv. als het geen foto van het toestel is). Dit wordt per model onthouden.</p>
+            <p id="fotos-hint" class="klein">Klik op een foto om hem over te slaan (bijv. als het geen foto van het toestel is). Dit wordt per model onthouden. De winkelfoto (Instellingen) gaat altijd als laatste mee.</p>
           </div>
 
           <div id="velden" hidden>
@@ -118,8 +118,16 @@
             <option>Ophalen</option><option>Ophalen of Verzenden</option><option>Verzenden</option>
           </select></label>
           <button class="primair">Opslaan</button>
+          <h2>Winkelfoto</h2>
+          <p class="klein">Eigen foto van je winkel. Gaat bij elke advertentie mee als laatste foto.</p>
+          <div class="winkelfoto">
+            <img id="winkelfoto-img" alt="Winkelfoto" hidden>
+            <span id="winkelfoto-leeg" class="klein">Geen winkelfoto gekozen.</span>
+          </div>
+          <button type="button" id="winkelfoto-kies" class="secundair">Foto kiezen…</button>
+          <button type="button" id="winkelfoto-wis" class="link" hidden>verwijderen</button>
           <h2>Instellingen meenemen</h2>
-          <p class="klein">Winkelgegevens, sjablonen en prijslijsten naar een andere pc of winkel overzetten.</p>
+          <p class="klein">Winkelgegevens, winkelfoto, sjablonen en prijslijsten naar een andere pc of winkel overzetten.</p>
           <button type="button" id="exporteer" class="secundair">Exporteren…</button>
           <button type="button" id="importeer" class="secundair">Importeren…</button>
         </form>

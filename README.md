@@ -13,7 +13,8 @@ Toont Windows "Windows heeft uw pc beschermd"? Klik op **Meer informatie** en da
 
 1. Download en installeer de app (zie hierboven).
 2. **Instellingen**: kies je browser (Edge, Chrome of Firefox, wordt onthouden als standaard), vul je winkelgegevens in en pas de titel- en tekstsjablonen, het winkelblok en de prijslijst voor schermreparaties aan.
-   Snel starten: **Importeren…** met een preset, bijv. [`presets/telecom-ae.json`](presets/telecom-ae.json). Met **Exporteren…** neem je je instellingen mee naar een andere pc of winkel.
+   Optioneel: kies een **winkelfoto**. Die gaat bij elke advertentie mee als laatste foto.
+   Snel starten: **Importeren…** met een preset, bijv. [`presets/telecom-ae.json`](presets/telecom-ae.json). Met **Exporteren…** neem je je instellingen (incl. winkelfoto) mee naar een andere pc of winkel.
 3. **Nieuwe advertentie**: kies type → zoek model → vul opslag, kleur, staat, batterij, garantie en prijs in.
 4. Klik **Invullen op Marktplaats**. De eerste keer opent een browservenster: log daar 1x in (per browser). Daarna onthoudt de app dat.
    Firefox: de app downloadt eenmalig een eigen Firefox (±90 MB, ±20 sec), omdat de besturing alleen met die versie werkt. Een eigen geïnstalleerde Firefox is niet nodig.
@@ -25,7 +26,7 @@ Toont Windows "Windows heeft uw pc beschermd"? Klik op **Meer informatie** en da
 **Betaalde categorie**: is de gewone categorie betaald, dan wijkt de app uit naar *Telefoon-accessoires > Toebehoren en Onderdelen*
 (instelbaar per type bij Instellingen). Let op: Marktplaats kan advertenties in een verkeerde categorie verwijderen.
 
-Data staat lokaal in `%APPDATA%\Marktplaats Poster\` (`data.json`, foto's, een browserprofiel per browser).
+Data staat lokaal in `%APPDATA%\Marktplaats Poster\` (`data.json`, foto's, winkelfoto, een browserprofiel per browser).
 
 ## Ontwikkelen
 

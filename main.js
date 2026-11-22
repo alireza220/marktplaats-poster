@@ -27,7 +27,22 @@ const DEFAULTS = {
   lastPrices: {},
   ingelogdGeweest: false,
   browser: 'msedge', // msedge | chrome | firefox, standaard voor deze pc
+  winkelfoto: null, // pad naar eigen winkelfoto, gaat altijd als laatste foto mee
 };
+
+const FOTO_TYPES = ['jpg', 'jpeg', 'png'];
+const winkelfoto = () => (data.winkelfoto && fs.existsSync(data.winkelfoto) ? data.winkelfoto : null);
+// Kopie in de app-map (gekozen bestand kan later verdwijnen); nieuwe naam per keer zodat de preview ververst
+function zetWinkelfoto(ext, buffer) {
+  if (data.winkelfoto) fs.rmSync(data.winkelfoto, { force: true });
+  data.winkelfoto = null;
+  if (buffer) {
+    data.winkelfoto = path.join(DIR, `winkelfoto-${Date.now().toString(36)}.${ext}`);
+    fs.writeFileSync(data.winkelfoto, buffer);
+  }
+  save();
+  return data;
+}
 
 function load() {
   try {
@@ -37,6 +52,7 @@ function load() {
   } catch { return structuredClone(DEFAULTS); }
 }
 let data = load();
+if (data.winkelfoto && !fs.existsSync(data.winkelfoto)) data.winkelfoto = null;
 mp.setBrowser(DIR, data.browser);
 function save() {
   // eerst naar tmp, dan hernoemen: een crash tijdens schrijven sloopt data.json niet
@@ -80,7 +96,9 @@ function buildAd(ad) {
   full.titel = ad.titel || renderTitle(data.templates[isRep ? 'titelReparatie' : 'titelToestel'], vars);
   const beschrijving = ad.beschrijving || renderTemplate(data.templates[isRep ? 'reparatie' : 'toestel'], vars);
   const uit = model.uitgesloten || [];
-  return { full, beschrijving, fotos: model.fotos.filter((f) => fs.existsSync(f) && !uit.includes(f)) };
+  const fotos = model.fotos.filter((f) => fs.existsSync(f) && !uit.includes(f));
+  if (winkelfoto()) fotos.push(winkelfoto());
+  return { full, beschrijving, fotos };
 }
 
 const handlers = {
@@ -139,12 +157,23 @@ const handlers = {
   },
   'browser:open': async () => { await mp.getPage(); },
 
+  'winkelfoto:kies': async () => {
+    const { filePaths } = await dialog.showOpenDialog({ filters: [{ name: 'Foto', extensions: FOTO_TYPES }], properties: ['openFile'] });
+    if (!filePaths?.length) return null;
+    const ext = path.extname(filePaths[0]).slice(1).toLowerCase();
+    if (!FOTO_TYPES.includes(ext)) throw new Error('Kies een foto (jpg of png).');
+    return zetWinkelfoto(ext, fs.readFileSync(filePaths[0]));
+  },
+  'winkelfoto:wis': () => zetWinkelfoto(),
+
   // Instellingen meenemen naar een andere pc (winkel, sjablonen, uitwijk, browser)
   'settings:export': async () => {
     const { filePath } = await dialog.showSaveDialog({ defaultPath: 'marktplaats-poster-instellingen.json', filters: [{ name: 'JSON', extensions: ['json'] }] });
     if (!filePath) return false;
     const { shop, templates, uitwijk, browser } = data;
-    fs.writeFileSync(filePath, JSON.stringify({ shop, templates, uitwijk, browser }, null, 1));
+    const foto = winkelfoto();
+    const fotoData = foto && { ext: path.extname(foto).slice(1), base64: fs.readFileSync(foto).toString('base64') };
+    fs.writeFileSync(filePath, JSON.stringify({ shop, templates, uitwijk, browser, winkelfoto: fotoData || undefined }, null, 1));
     return true;
   },
   'settings:import': async () => {
@@ -156,6 +185,7 @@ const handlers = {
     data.templates = { ...DEFAULTS.templates, ...imp.templates };
     if (imp.uitwijk) data.uitwijk = { ...DEFAULTS.uitwijk, ...imp.uitwijk };
     if (imp.browser) { data.browser = imp.browser; mp.setBrowser(DIR, data.browser); }
+    if (FOTO_TYPES.includes(imp.winkelfoto?.ext) && imp.winkelfoto.base64) zetWinkelfoto(imp.winkelfoto.ext, Buffer.from(imp.winkelfoto.base64, 'base64'));
     save();
     return data;
   },

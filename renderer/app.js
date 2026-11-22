@@ -86,7 +86,8 @@ function toonFotos() {
   const uit = new Set(model.uitgesloten || []);
   $('#fotos').innerHTML = model.fotos.map((f, i) => `<button type="button" class="foto${uit.has(f) ? ' uit' : ''}" data-i="${i}"
     title="${uit.has(f) ? 'Wordt overgeslagen. Klik om wel te gebruiken' : 'Klik om deze foto over te slaan'}" aria-pressed="${!uit.has(f)}"><img src="${esc(fileUrl(f))}" alt="Foto ${i + 1}"></button>`).join('')
-    || '<span class="klein">Geen foto\'s gevonden</span>';
+    + (data.winkelfoto ? `<span class="foto winkel" title="Winkelfoto, gaat altijd als laatste mee (wijzigen bij Instellingen)"><img src="${esc(fileUrl(data.winkelfoto))}" alt="Winkelfoto"></span>` : '')
+    ||'<span class="klein">Geen foto\'s gevonden</span>';
   $('#fotos-hint').hidden = !model.fotos.length;
   $$('#fotos .foto').forEach((b) => b.addEventListener('click', async () => {
     const f = model.fotos[b.dataset.i];
@@ -218,7 +219,23 @@ $('#browser').addEventListener('change', async (e) => {
   setTimeout(() => melding(''), 2500);
 });
 opslaanForm('#winkel', 'shop');
+function toonWinkelfoto() {
+  const f = data.winkelfoto;
+  $('#winkelfoto-img').hidden = $('#winkelfoto-wis').hidden = !f;
+  $('#winkelfoto-leeg').hidden = !!f;
+  if (f) $('#winkelfoto-img').src = fileUrl(f);
+  $('#winkelfoto-kies').textContent = f ? 'Andere foto kiezen…' : 'Foto kiezen…';
+  if (model) toonFotos();
+}
+$('#winkelfoto-kies').addEventListener('click', async () => {
+  const nieuw = await call('winkelfoto:kies');
+  if (nieuw) { data = nieuw; toonWinkelfoto(); melding('Winkelfoto opgeslagen.'); }
+});
+$('#winkelfoto-wis').addEventListener('click', async () => {
+  data = await call('winkelfoto:wis'); toonWinkelfoto(); melding('Winkelfoto verwijderd.');
+});
 function vulInstellingen() {
+  toonWinkelfoto();
   $('#browser').value = data.browser;
   vulForm($('#winkel'), data.shop);
   vulForm($('#sjablonen'), data.templates);
