@@ -88,6 +88,7 @@ async function kiesModel(item, opnieuw = false) {
   const opties = (lijst) => lijst.map((v) => `<option>${esc(v)}</option>`).join('');
   $('#opslag').innerHTML = opties(s.opslag.length ? s.opslag : ['']);
   $('#kleur').innerHTML = opties(s.kleuren.length ? s.kleuren : ['']);
+  toonKleurFotos();
   $('#model').hidden = $('#velden').hidden = $('#voorbeeld-kaart').hidden = false;
   await vulLaatstePrijs();
   await voorbeeld();
@@ -111,6 +112,27 @@ function toonFotos() {
     toonFotos();
   }));
 }
+// Eigen foto's per model en kleur (alleen toestellen)
+function toonKleurFotos() {
+  const kleur = $('#kleur').value;
+  const toon = soort() !== 'reparatie' && !!kleur;
+  $('#kleurfotos').hidden = !toon;
+  if (!toon) return;
+  const lijst = model.kleurFotos?.[kleur] || [];
+  $('#kleurfotos-naam').textContent = kleur;
+  $('#kleurfotos-lijst').innerHTML = lijst.map((f, i) => `<button type="button" class="foto" data-i="${i}" title="Klik om deze foto te verwijderen"><img src="${esc(fileUrl(f))}" alt="Foto ${esc(kleur)} ${i + 1}"></button>`).join('')
+    || '<span class="klein">Nog geen eigen foto\'s voor deze kleur. De foto\'s hierboven (GSMArena) gaan mee.</span>';
+  $$('#kleurfotos-lijst button.foto').forEach((b) => b.addEventListener('click', async () => {
+    if (!confirm('Deze foto verwijderen voor deze kleur?')) return;
+    model = await call('kleurfotos:wis', model.id, kleur, lijst[b.dataset.i]);
+    data.models[model.id] = model;
+    toonKleurFotos();
+  }));
+}
+$('#kleurfotos-kies').addEventListener('click', async () => {
+  const m = await call('kleurfotos:toevoegen', model.id, $('#kleur').value);
+  if (m) { model = m; data.models[model.id] = model; toonKleurFotos(); }
+});
 $('#model-opnieuw').addEventListener('click', () => gekozen && kiesModel(gekozen, true));
 
 function formAd() {
@@ -135,6 +157,7 @@ async function voorbeeld() {
 }
 $('#velden').addEventListener('input', voorbeeld);
 $('#velden').addEventListener('change', async (e) => {
+  if (e.target.id === 'kleur') toonKleurFotos();
   if (['opslag', 'staat'].includes(e.target.id)) await vulLaatstePrijs();
   voorbeeld();
 });
@@ -180,6 +203,7 @@ async function laadAdvertentie(ad, direct) {
   $(`input[name=soort][value="${ad.kind}"]`).dispatchEvent(new Event('change'));
   await kiesModel(m);
   for (const k of ['opslag', 'kleur', 'mpKleur', 'staat', 'batterij', 'garantie', 'prijs', 'opmerking']) if (ad[k] !== undefined) $(`#${k}`).value = ad[k];
+  toonKleurFotos();
   bewerkId = ad.id;
   eigenTekst = !!ad.beschrijving;
   if (eigenTekst) { $('#titel').value = ad.titel; $('#beschrijving').value = ad.beschrijving; } else await voorbeeld();

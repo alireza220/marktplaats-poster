@@ -49,6 +49,8 @@ code { background: #f1f3f5; padding: 1px 4px; border-radius: 3px; font-size: 12p
 .fotos .foto.winkel { border-style: dashed; cursor: default; }
 .fotos .foto.winkel::after { content: "winkel"; position: absolute; left: 0; right: 0; bottom: 4px; font-size: 10px; color: var(--blauw); font-weight: 600; text-align: center; }
 .winkelfoto { margin-bottom: 8px; }
+h3 { font-size: 13px; margin: 12px 0 6px; }
+#kleurfotos { border-top: 1px solid var(--rand); margin-top: 8px; padding-top: 2px; }
 .winkelfoto img { display: block; max-width: 220px; max-height: 160px; border: 1px solid var(--rand); border-radius: 6px; }
 .log {list-style: none; padding: 0; font-size: 13px; }
 .log li::before { content: "✔ "; color: var(--groen); }

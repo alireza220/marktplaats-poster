@@ -109,8 +109,10 @@ function buildAd(ad) {
   full.titel = ad.titel || renderTitle(data.templates[isRep ? 'titelReparatie' : 'titelToestel'], vars);
   const beschrijving = ad.beschrijving || renderTemplate(data.templates[isRep ? 'reparatie' : 'toestel'], vars);
   const uit = model.uitgesloten || [];
-  // Schermreparatie: schermfoto's van Phone City, geen foto's van de telefoon
-  const fotos = (isRep ? model.schermFotos || [] : model.fotos).filter((f) => fs.existsSync(f) && !uit.includes(f));
+  // Schermreparatie: schermfoto's van Phone City, geen foto's van de telefoon.
+  // Toestel: eerst eigen foto's van deze kleur, dan GSMArena. Winkelfoto altijd als laatste.
+  const kleur = isRep ? [] : model.kleurFotos?.[ad.kleur] || [];
+  const fotos = [...kleur, ...(isRep ? model.schermFotos || [] : model.fotos).filter((f) => !uit.includes(f))].filter((f) => fs.existsSync(f));
   if (winkelfoto()) fotos.push(winkelfoto());
   return { full, beschrijving, fotos };
 }
@@ -143,6 +145,33 @@ const handlers = {
   'models:fotos': (id, uitgesloten) => {
     const m = data.models[id];
     m.uitgesloten = uitgesloten.filter((f) => m.fotos.includes(f) || m.schermFotos?.includes(f));
+    save();
+    return m;
+  },
+  // Eigen foto's per model en kleur (bijv. iPhone 13 Blue), gaan als eerste mee en worden onthouden
+  'kleurfotos:toevoegen': async (id, kleur) => {
+    const m = data.models[id];
+    const { filePaths } = await dialog.showOpenDialog({ title: `Foto's voor ${m.name} ${kleur}`, filters: [{ name: 'Foto', extensions: FOTO_TYPES }], properties: ['openFile', 'multiSelections'] });
+    if (!filePaths?.length) return null;
+    const dir = path.join(DIR, 'kleurfotos', id);
+    fs.mkdirSync(dir, { recursive: true });
+    const lijst = (m.kleurFotos ||= {})[kleur] ||= [];
+    for (const src of filePaths) {
+      const ext = path.extname(src).slice(1).toLowerCase();
+      if (!FOTO_TYPES.includes(ext) || lijst.length >= 10) continue;
+      const file = path.join(dir, `${kleur.replace(/[^a-z0-9]+/gi, '-')}-${Date.now().toString(36)}${lijst.length}.${ext}`);
+      fs.copyFileSync(src, file);
+      lijst.push(file);
+    }
+    save();
+    return m;
+  },
+  'kleurfotos:wis': (id, kleur, file) => {
+    const m = data.models[id];
+    const lijst = m.kleurFotos?.[kleur] || [];
+    if (lijst.includes(file)) fs.rmSync(file, { force: true });
+    m.kleurFotos[kleur] = lijst.filter((f) => f !== file);
+    if (!m.kleurFotos[kleur].length) delete m.kleurFotos[kleur];
     save();
     return m;
   },

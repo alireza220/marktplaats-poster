@@ -22,6 +22,8 @@ Toont Windows "Windows heeft uw pc beschermd"? Klik op **Meer informatie** en da
    Betaalde categorie, of meldt Marktplaats een fout? Dan plaatst de app niet: controleer het formulier en klik zelf op **Plaats je advertentie** (oranje omrand).
    Liever altijd zelf klikken? Zet bij Instellingen *Advertentie automatisch plaatsen* uit.
 
+**Foto's per kleur**: GSMArena heeft geen foto's per kleur. Onder *Foto's voor kleur* voeg je eigen foto's toe voor het gekozen model en de gekozen kleur; die gaan als eerste mee en worden onthouden.
+
 **Schermreparatie**: de foto's zijn schermfoto's van Phone City (eenmalig per model opgehaald). Klik op een foto om hem over te slaan.
 
 **Advertenties**: overzicht van je online advertenties met verloopdatum. Bij opstarten meldt de app wat binnen 3 dagen verloopt.

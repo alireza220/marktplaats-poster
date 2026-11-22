@@ -1,7 +1,7 @@
 {
   "name": "marktplaats-poster",
   "productName": "Marktplaats Poster",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Vult Marktplaats-advertenties in voor telefoonwinkels",
   "main": "main.js",
   "scripts": {
