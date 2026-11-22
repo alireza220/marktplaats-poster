@@ -211,7 +211,7 @@ const handlers = {
     data.ingelogdGeweest = true; save();
     return list;
   },
-  'browser:open': async () => { await mp.getPage(); },
+  'browser:open': async () => { await mp.openMarktplaats(); },
 
   'winkelfoto:kies': async () => {
     const { filePaths } = await dialog.showOpenDialog({ filters: [{ name: 'Foto', extensions: FOTO_TYPES }], properties: ['openFile'] });
