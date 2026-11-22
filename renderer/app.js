@@ -286,6 +286,7 @@ opslaanForm('#uitwijk', 'uitwijk', (v) => Object.fromEntries(Object.entries(v).m
 // ---------- start ----------
 (async () => {
   data = await call('data:get');
+  $('#versie').textContent = `v${await call('app:versie')}`;
   vulInstellingen();
   toonOpgeslagen();
   if (!data.shop.naam) melding('Welkom! Vul eerst je winkelgegevens in bij Instellingen.');

@@ -117,6 +117,7 @@ function buildAd(ad) {
 
 const handlers = {
   'data:get': () => data,
+  'app:versie': () => app.getVersion(),
   'data:set': (key, value) => {
     data[key] = value; save();
     if (key === 'browser') mp.setBrowser(DIR, value);
