@@ -2,12 +2,14 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const gsm = require('./lib/gsmarena');
+const pc = require('./lib/phonecity');
 const mp = require('./lib/marktplaats');
 const { renderTemplate, renderTitle, staatKort, shopBlock, merkGroep, mpColor, CATEGORIES, WINKELTEKST } = require('./lib/mapping');
 
 const DIR = app.getPath('userData');
 const DATA_FILE = path.join(DIR, 'data.json');
 const LIST_FILE = path.join(DIR, 'modellijst.json');
+const SCHERM_FILE = path.join(DIR, 'phonecity-schermen.json');
 
 const DEFAULTS = {
   // kort = winkelnaam vooraan in de titel; tekst = vast winkelblok ({winkel}) onder elke advertentie
@@ -28,6 +30,7 @@ const DEFAULTS = {
   ingelogdGeweest: false,
   browser: 'msedge', // msedge | chrome | firefox, standaard voor deze pc
   winkelfoto: null, // pad naar eigen winkelfoto, gaat altijd als laatste foto mee
+  autoPlaatsen: true, // na invullen zelf op "Plaats je advertentie" klikken (alleen gratis)
 };
 
 const FOTO_TYPES = ['jpg', 'jpeg', 'png'];
@@ -70,6 +73,16 @@ async function modelList() {
   return list;
 }
 
+// Schermproducten van Phone City, 3 dagen bewaard
+async function schermLijst(vers = false) {
+  try {
+    if (!vers && Date.now() - fs.statSync(SCHERM_FILE).mtimeMs < 3 * 864e5) return JSON.parse(fs.readFileSync(SCHERM_FILE, 'utf8'));
+  } catch { /* nog geen lijst */ }
+  const list = await pc.fetchSchermen();
+  fs.writeFileSync(SCHERM_FILE, JSON.stringify(list));
+  return list;
+}
+
 const priceKey = (ad) => [ad.kind, ad.modelId, ad.opslag, ad.staat].join('|');
 
 function buildAd(ad) {
@@ -96,7 +109,8 @@ function buildAd(ad) {
   full.titel = ad.titel || renderTitle(data.templates[isRep ? 'titelReparatie' : 'titelToestel'], vars);
   const beschrijving = ad.beschrijving || renderTemplate(data.templates[isRep ? 'reparatie' : 'toestel'], vars);
   const uit = model.uitgesloten || [];
-  const fotos = model.fotos.filter((f) => fs.existsSync(f) && !uit.includes(f));
+  // Schermreparatie: schermfoto's van Phone City, geen foto's van de telefoon
+  const fotos = (isRep ? model.schermFotos || [] : model.fotos).filter((f) => fs.existsSync(f) && !uit.includes(f));
   if (winkelfoto()) fotos.push(winkelfoto());
   return { full, beschrijving, fotos };
 }
@@ -119,7 +133,7 @@ const handlers = {
   'models:get': async (item, opnieuw) => {
     if (!opnieuw && data.models[item.id]) return data.models[item.id];
     const oud = data.models[item.id];
-    data.models[item.id] = { ...await gsm.fetchModel(item, path.join(DIR, 'fotos', item.id)), uitgesloten: oud?.uitgesloten || [] };
+    data.models[item.id] = { ...oud, ...await gsm.fetchModel(item, path.join(DIR, 'fotos', item.id)), uitgesloten: oud?.uitgesloten || [] };
     save();
     return data.models[item.id];
   },
@@ -127,7 +141,17 @@ const handlers = {
   // Foto's die niet mee moeten (bijv. een persfoto van de binnenkant), onthouden per model
   'models:fotos': (id, uitgesloten) => {
     const m = data.models[id];
-    m.uitgesloten = uitgesloten.filter((f) => m.fotos.includes(f));
+    m.uitgesloten = uitgesloten.filter((f) => m.fotos.includes(f) || m.schermFotos?.includes(f));
+    save();
+    return m;
+  },
+  // Schermfoto's voor schermreparatie: eenmalig per model van Phone City, daarna lokaal
+  'models:schermfotos': async (id, opnieuw) => {
+    const m = data.models[id];
+    if (!opnieuw && m.schermFotos) return m;
+    let lijst = await schermLijst(opnieuw);
+    if (!pc.matchSchermen(lijst, m.name).length && !opnieuw) lijst = await schermLijst(true); // misschien nieuw in het assortiment
+    Object.assign(m, await pc.fetchSchermFotos(lijst, m.name, path.join(DIR, 'schermfotos', id)));
     save();
     return m;
   },
@@ -140,10 +164,12 @@ const handlers = {
     const result = await mp.fillAd(full, {
       beschrijving, fotos, shop: data.shop,
       uitwijk: uitwijkKey ? CATEGORIES[uitwijkKey] : null,
+      plaatsen: data.autoPlaatsen !== false,
     });
     data.lastPrices[priceKey(ad)] = ad.prijs;
     // beschrijving alleen bewaren als die met de hand is aangepast; anders bij opnieuw plaatsen vers uit sjabloon
     const saved = { ...ad, titel: full.titel, id: ad.id || Date.now().toString(36), ingevuld: new Date().toISOString() };
+    if (result.geplaatst) saved.geplaatst = saved.ingevuld;
     data.ads = [saved, ...data.ads.filter((a) => a.id !== saved.id)];
     data.ingelogdGeweest = true;
     save();

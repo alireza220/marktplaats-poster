@@ -3,6 +3,7 @@
   --blauw: #1d5fbf; --oranje: #f5a623; --rood: #c62828; --groen: #2e7d32;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { margin: 0; font: 14px/1.45 "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--tekst); }
 header { display: flex; align-items: center; gap: 24px; padding: 10px 20px; background: var(--kaart); border-bottom: 1px solid var(--rand); position: sticky; top: 0; z-index: 2; }
 h1 { font-size: 17px; margin: 0; display: flex; align-items: center; gap: 10px; }
@@ -58,5 +59,8 @@ td:last-child { text-align: right; white-space: nowrap; }
 td button { margin-left: 6px; }
 .bijna { color: var(--rood); font-weight: 600; }
 #melding { margin: 12px 20px 0; padding: 10px 14px; border-radius: 8px; background: #fff4e0; border: 1px solid var(--oranje); }
+#melding.ok { background: #e8f5e9; border-color: var(--groen); font-weight: 600; }
+.vinkje { display: flex; align-items: center; gap: 8px; color: var(--tekst); font-size: 14px; }
+.vinkje input { width: auto; margin: 0; }
 #melding.fout { background: #fdecea; border-color: var(--rood); }
 @media (max-width: 900px) { .kolommen { grid-template-columns: 1fr; } }

@@ -42,6 +42,7 @@
             <p id="model-specs" class="klein"></p>
             <div id="fotos" class="fotos"></div>
             <p id="fotos-hint" class="klein">Klik op een foto om hem over te slaan (bijv. als het geen foto van het toestel is). Dit wordt per model onthouden. De winkelfoto (Instellingen) gaat altijd als laatste mee.</p>
+            <p id="fotos-bron" class="klein" hidden>Schermfoto's van Phone City, eenmalig per model opgehaald. Nieuwe nodig? Klik op "specs opnieuw ophalen".</p>
           </div>
 
           <div id="velden" hidden>
@@ -71,7 +72,7 @@
           <label>Beschrijving <textarea id="beschrijving" rows="18"></textarea></label>
           <button id="tekst-reset" class="link">tekst opnieuw maken uit sjabloon</button>
           <button id="invullen" class="primair">Invullen op Marktplaats</button>
-          <p class="klein">De app vult alles in. Controleer het formulier en klik zelf op <b>Plaats je advertentie</b>.</p>
+          <p id="invullen-hint" class="klein"></p>
           <ul id="log" class="log"></ul>
         </div>
       </div>
@@ -141,6 +142,9 @@
               <option value="firefox">Firefox</option>
             </select></label>
             <p class="klein">Wordt onthouden als standaard op deze pc. Per browser log je 1x in bij Marktplaats. Firefox wordt de eerste keer eenmalig gedownload (±90 MB).</p>
+            <h2>Plaatsen</h2>
+            <label class="vinkje"><input type="checkbox" id="autoPlaatsen"> Advertentie automatisch plaatsen na invullen</label>
+            <p class="klein">Alleen in gratis categorieën. In een betaalde categorie, of als Marktplaats een fout meldt, rond je het zelf af.</p>
           </form>
           <form id="sjablonen">
             <h2>Sjablonen</h2>

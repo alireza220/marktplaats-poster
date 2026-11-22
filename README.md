@@ -1,7 +1,7 @@
 # Marktplaats Poster
 
 Windows-app die Marktplaats-advertenties invult voor telefoonwinkels: toestellen (telefoon/smartwatch) en schermreparaties.
-Specs en officiële foto's komen automatisch van GSMArena. Jij klikt zelf op **Plaats je advertentie**.
+Specs en officiële foto's komen automatisch van GSMArena, schermfoto's voor reparaties van Phone City. De app plaatst de advertentie zelf (gratis categorieën).
 
 ## Downloaden
 
@@ -16,9 +16,13 @@ Toont Windows "Windows heeft uw pc beschermd"? Klik op **Meer informatie** en da
    Optioneel: kies een **winkelfoto**. Die gaat bij elke advertentie mee als laatste foto.
    Snel starten: **Importeren…** met een preset, bijv. [`presets/telecom-ae.json`](presets/telecom-ae.json). Met **Exporteren…** neem je je instellingen (incl. winkelfoto) mee naar een andere pc of winkel.
 3. **Nieuwe advertentie**: kies type → zoek model → vul opslag, kleur, staat, batterij, garantie en prijs in.
-4. Klik **Invullen op Marktplaats**. De eerste keer opent een browservenster: log daar 1x in (per browser). Daarna onthoudt de app dat.
+4. Klik **Plaatsen op Marktplaats**. De eerste keer opent een browservenster: log daar 1x in (per browser). Daarna onthoudt de app dat.
    Firefox: de app downloadt eenmalig een eigen Firefox (±90 MB, ±20 sec), omdat de besturing alleen met die versie werkt. Een eigen geïnstalleerde Firefox is niet nodig.
-5. Controleer het formulier en klik zelf op **Plaats je advertentie** (de knop is oranje omrand).
+5. De app plaatst de advertentie zelf, meldt **Geplaatst** en zet het formulier klaar voor de volgende.
+   Betaalde categorie, of meldt Marktplaats een fout? Dan plaatst de app niet: controleer het formulier en klik zelf op **Plaats je advertentie** (oranje omrand).
+   Liever altijd zelf klikken? Zet bij Instellingen *Advertentie automatisch plaatsen* uit.
+
+**Schermreparatie**: de foto's zijn schermfoto's van Phone City (eenmalig per model opgehaald). Klik op een foto om hem over te slaan.
 
 **Advertenties**: overzicht van je online advertenties met verloopdatum. Bij opstarten meldt de app wat binnen 3 dagen verloopt.
 "Opnieuw plaatsen" werkt voor advertenties die via de app zijn ingevuld (herkend op titel).

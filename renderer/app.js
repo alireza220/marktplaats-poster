@@ -9,9 +9,9 @@ let gekozen = null;      // zoekresultaat
 let bewerkId = null;     // id van opgeslagen advertentie die opnieuw wordt ingevuld
 let eigenTekst = false;  // titel/beschrijving met de hand aangepast
 
-function melding(tekst, fout = false) {
+function melding(tekst, fout = false, ok = false) {
   const el = $('#melding');
-  el.hidden = !tekst; el.textContent = tekst || ''; el.classList.toggle('fout', fout);
+  el.hidden = !tekst; el.textContent = tekst || ''; el.classList.toggle('fout', fout); el.classList.toggle('ok', ok);
 }
 async function call(name, ...args) {
   try { return await window.api(name, ...args); } catch (e) { melding(e.message, true); throw e; }
@@ -32,6 +32,13 @@ $('#open-browser').addEventListener('click', async () => {
 // ---------- nieuwe advertentie ----------
 const soort = () => $('input[name=soort]:checked').value;
 
+const knopTekst = () => (data?.autoPlaatsen === false ? 'Invullen op Marktplaats' : 'Plaatsen op Marktplaats');
+function toonKnop() {
+  $('#invullen').textContent = knopTekst();
+  $('#invullen-hint').innerHTML = data.autoPlaatsen === false
+    ? 'De app vult alles in. Controleer het formulier en klik zelf op <b>Plaats je advertentie</b>.'
+    : 'De app vult alles in en plaatst de advertentie zelf (alleen gratis categorieën).';
+}
 function resetModel() {
   model = null; gekozen = null; bewerkId = null; eigenTekst = false;
   $('#model').hidden = $('#velden').hidden = $('#voorbeeld-kaart').hidden = true;
@@ -68,8 +75,12 @@ async function kiesModel(item, opnieuw = false) {
   $('#zoek').value = `${item.brand} ${item.name}`;
   melding(data.models[item.id] && !opnieuw ? '' : 'Specs en foto\'s ophalen bij GSMArena…');
   model = await call('models:get', item, opnieuw);
+  if (soort() === 'reparatie' && (opnieuw || !model.schermFotos)) {
+    melding('Schermfoto\'s ophalen bij Phone City…');
+    model = await call('models:schermfotos', item.id, opnieuw);
+  }
   data.models[item.id] = model;
-  melding('');
+  melding(soort() === 'reparatie' && !model.schermFotos.length ? `Geen schermfoto's gevonden bij Phone City voor ${model.brand} ${model.name}. Alleen de winkelfoto gaat mee.` : '');
   const s = model.specs;
   $('#model-naam').textContent = `${model.brand} ${model.name}`;
   $('#model-specs').textContent = [s.chipset, s.maxGhz && `${s.maxGhz} GHz`, s.scherm, s.netwerk, s.jaar].filter(Boolean).join(' · ');
@@ -82,15 +93,18 @@ async function kiesModel(item, opnieuw = false) {
   await voorbeeld();
 }
 // Klik op een foto = overslaan / weer gebruiken (onthouden per model)
+const modelFotos = () => (soort() === 'reparatie' ? model.schermFotos || [] : model.fotos);
 function toonFotos() {
   const uit = new Set(model.uitgesloten || []);
-  $('#fotos').innerHTML = model.fotos.map((f, i) => `<button type="button" class="foto${uit.has(f) ? ' uit' : ''}" data-i="${i}"
+  const fotos = modelFotos();
+  $('#fotos').innerHTML = fotos.map((f, i) => `<button type="button" class="foto${uit.has(f) ? ' uit' : ''}" data-i="${i}"
     title="${uit.has(f) ? 'Wordt overgeslagen. Klik om wel te gebruiken' : 'Klik om deze foto over te slaan'}" aria-pressed="${!uit.has(f)}"><img src="${esc(fileUrl(f))}" alt="Foto ${i + 1}"></button>`).join('')
     + (data.winkelfoto ? `<span class="foto winkel" title="Winkelfoto, gaat altijd als laatste mee (wijzigen bij Instellingen)"><img src="${esc(fileUrl(data.winkelfoto))}" alt="Winkelfoto"></span>` : '')
     ||'<span class="klein">Geen foto\'s gevonden</span>';
-  $('#fotos-hint').hidden = !model.fotos.length;
-  $$('#fotos .foto').forEach((b) => b.addEventListener('click', async () => {
-    const f = model.fotos[b.dataset.i];
+  $('#fotos-hint').hidden = !fotos.length;
+  $('#fotos-bron').hidden = soort() !== 'reparatie';
+  $$('#fotos button.foto').forEach((b) => b.addEventListener('click', async () => {
+    const f = fotos[b.dataset.i];
     const nieuw = uit.has(f) ? [...uit].filter((x) => x !== f) : [...uit, f];
     model = await call('models:fotos', model.id, nieuw);
     data.models[model.id] = model;
@@ -131,17 +145,29 @@ $('#invullen').addEventListener('click', async () => {
   if (!model) return;
   if (!$('#prijs').value) { melding('Vul een prijs in.', true); $('#prijs').focus(); return; }
   const knop = $('#invullen');
-  knop.disabled = true; knop.textContent = 'Bezig met invullen…';
+  knop.disabled = true; knop.textContent = data.autoPlaatsen === false ? 'Bezig met invullen…' : 'Bezig met plaatsen…';
   $('#log').innerHTML = '';
   melding(`Het Marktplaats-venster opent${data.browser === 'firefox' ? ' (eerste keer: Firefox wordt eerst gedownload, ±1 minuut)' : ''}. Niet ingelogd? Log daar in, de app gaat daarna vanzelf verder.`);
   try {
-    const res = await call('ad:fill', formAd());
-    $('#log').innerHTML = res.log.map((l) => `<li class="${l.ok ? '' : 'fout'}"><b>${esc(l.naam)}</b> ${esc(l.info)}</li>`).join('');
-    melding(`Ingevuld in ${res.categorie}. Controleer het formulier in het Marktplaats-venster en klik zelf op "Plaats je advertentie".`);
+    const ad = formAd();
+    const res = await call('ad:fill', ad);
     data = await call('data:get');
     toonOpgeslagen();
+    if (res.geplaatst) {
+      // Klaar: melding en meteen door naar een nieuwe advertentie van hetzelfde type
+      const naam = $('#titel').value;
+      resetModel();
+      for (const id of ['zoek', 'prijs', 'batterij', 'opmerking']) $(`#${id}`).value = '';
+      $('#zoek').focus();
+      melding(`✔ Geplaatst op Marktplaats in ${res.categorie}: "${naam}". Je kunt de volgende advertentie maken.`, false, true);
+      return;
+    }
+    $('#log').innerHTML = res.log.map((l) => `<li class="${l.ok ? '' : 'fout'}"><b>${esc(l.naam)}</b> ${esc(l.info)}</li>`).join('');
+    melding(res.betaald
+      ? `Ingevuld in ${res.categorie}, maar dit is een betaalde categorie: de app plaatst niet zelf. Controleer het formulier en rond het zelf af in het Marktplaats-venster.`
+      : `Ingevuld in ${res.categorie}${data.autoPlaatsen === false ? '' : ', maar niet geplaatst (zie hieronder)'}. Controleer het formulier in het Marktplaats-venster en klik zelf op "Plaats je advertentie".`, res.betaald || data.autoPlaatsen !== false);
   } finally {
-    knop.disabled = false; knop.textContent = 'Invullen op Marktplaats';
+    knop.disabled = false; knop.textContent = knopTekst();
   }
 });
 
@@ -167,9 +193,9 @@ const dagenTot = (iso) => Math.ceil((new Date(iso) - Date.now()) / 864e5);
 function toonOpgeslagen() {
   $('#opgeslagen tbody').innerHTML = data.ads.map((a) => `<tr>
     <td>${esc(a.titel)}</td><td>€ ${esc(a.prijs)}</td><td>${datum(a.ingevuld)}</td>
-    <td><button class="secundair" data-laad="${a.id}">Opnieuw invullen</button><button class="link" data-wis="${a.id}">verwijderen</button></td></tr>`).join('')
+    <td><button class="secundair" data-laad="${a.id}" title="Zet deze advertentie terug in het formulier">Laden</button><button class="link" data-wis="${a.id}">verwijderen</button></td></tr>`).join('')
     || '<tr><td colspan="4" class="klein">Nog niets ingevuld.</td></tr>';
-  $$('[data-laad]').forEach((b) => b.addEventListener('click', () => laadAdvertentie(data.ads.find((a) => a.id === b.dataset.laad), true)));
+  $$('[data-laad]').forEach((b) => b.addEventListener('click', () => laadAdvertentie(data.ads.find((a) => a.id === b.dataset.laad), false)));
   $$('[data-wis]').forEach((b) => b.addEventListener('click', async () => {
     if (!confirm('Deze opgeslagen advertentie verwijderen uit de app? (Op Marktplaats verandert niets.)')) return;
     data = await call('ads:delete', b.dataset.wis); toonOpgeslagen();
@@ -234,8 +260,16 @@ $('#winkelfoto-kies').addEventListener('click', async () => {
 $('#winkelfoto-wis').addEventListener('click', async () => {
   data = await call('winkelfoto:wis'); toonWinkelfoto(); melding('Winkelfoto verwijderd.');
 });
+$('#autoPlaatsen').addEventListener('change', async (e) => {
+  data = await call('data:set', 'autoPlaatsen', e.target.checked);
+  toonKnop();
+  melding(e.target.checked ? 'De app plaatst gratis advertenties voortaan zelf.' : 'Je klikt voortaan zelf op Plaats je advertentie.');
+  setTimeout(() => melding(''), 2500);
+});
 function vulInstellingen() {
   toonWinkelfoto();
+  $('#autoPlaatsen').checked = data.autoPlaatsen !== false;
+  toonKnop();
   $('#browser').value = data.browser;
   vulForm($('#winkel'), data.shop);
   vulForm($('#sjablonen'), data.templates);
